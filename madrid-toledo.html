@@ -9,523 +9,594 @@
   <title>Madrid & Toledo 🇪🇸</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
   <style>
     :root{
-      --bg-primary:#fff5f5;--bg-secondary:#fde8e8;--bg-card:#ffffff;--bg-elevated:#fff8f0;
-      --border-color:#fca5a5;--accent-primary:#f59e0b;--accent-secondary:#0ea5e9;
-      --accent-go:#16a34a;--accent-danger:#dc2626;
-      --text-primary:#1c0a0a;--text-secondary:#991b1b;--text-muted:#6b7280;
-      --header-bg:#b91c1c;--header-border:#991b1b;
-      --shadow-lg:0 8px 32px rgba(185,28,28,0.18);--shadow-card:0 2px 12px rgba(185,28,28,0.10);
-      --header-height:7rem;--btn-min:4rem;
-      --radius-sm:0.625rem;--radius-md:1rem;--radius-lg:1.5rem;
-      --text-xs:1.5rem;--text-sm:1.875rem;--text-base:2.25rem;--text-lg:2.625rem;--text-xl:3rem;
+      --bg:#fff5f5;--bg2:#fde8e8;--card:#fff;--elev:#fff8f0;
+      --bord:#fca5a5;--sky:#0ea5e9;--go:#16a34a;--red:#dc2626;
+      --tx:#1c0a0a;--tx2:#991b1b;--muted:#6b7280;
+      --hbg:#b91c1c;--hbord:#991b1b;
+      --shad:0 8px 32px rgba(185,28,28,.18);--shadc:0 2px 12px rgba(185,28,28,.10);
+      --hh:7rem;--bmin:4rem;
+      --rs:.625rem;--rm:1rem;--rl:1.5rem;
+      --xs:1.5rem;--sm:1.875rem;--base:2.25rem;--lg:2.625rem;--xl:3rem;
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     html{font-size:100%;scroll-behavior:smooth;-webkit-text-size-adjust:100%}
-    body{font-family:'Outfit',sans-serif;background:var(--bg-primary);background-image:radial-gradient(circle at 15% 30%,rgba(245,158,11,.10) 0%,transparent 50%),radial-gradient(circle at 85% 70%,rgba(185,28,28,.07) 0%,transparent 50%);color:var(--text-primary);font-size:var(--text-base);line-height:1.8;min-height:100vh}
+    body{font-family:'Outfit',sans-serif;background:var(--bg);background-image:radial-gradient(circle at 15% 30%,rgba(245,158,11,.10) 0%,transparent 50%),radial-gradient(circle at 85% 70%,rgba(185,28,28,.07) 0%,transparent 50%);color:var(--tx);font-size:var(--base);line-height:1.8;min-height:100vh}
     .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-    :focus-visible{outline:3px solid var(--accent-primary);outline-offset:3px;border-radius:var(--radius-sm)}
-    .hidden{display:none!important}
+    :focus-visible{outline:3px solid #f59e0b;outline-offset:3px;border-radius:var(--rs)}
 
-    .app-header{position:fixed;top:0;left:0;right:0;z-index:200;height:calc(var(--header-height) + env(safe-area-inset-top,0));padding-top:env(safe-area-inset-top,0);background:var(--header-bg);border-bottom:3px solid var(--header-border);display:flex;align-items:center;justify-content:space-between;padding-left:1rem;padding-right:1rem;gap:.75rem;box-shadow:0 4px 20px rgba(0,0,0,.25)}
-    .header-title{font-size:clamp(1.4rem,4vw,2.2rem);font-weight:900;color:#fff;line-height:1;flex:1;text-align:center}
-    .header-flag{font-size:2.2rem}
+    .app-header{position:fixed;top:0;left:0;right:0;z-index:200;height:calc(var(--hh) + env(safe-area-inset-top,0));padding-top:env(safe-area-inset-top,0);background:var(--hbg);border-bottom:3px solid var(--hbord);display:flex;align-items:center;justify-content:space-between;padding-left:1rem;padding-right:1rem;gap:.75rem;box-shadow:0 4px 20px rgba(0,0,0,.25)}
+    .htitle{font-size:clamp(1.4rem,4vw,2.2rem);font-weight:900;color:#fff;flex:1;text-align:center}
+    .hflag{font-size:2.2rem}
 
-    .city-tabs{display:flex;background:var(--bg-secondary);border-bottom:3px solid var(--border-color);position:sticky;top:calc(var(--header-height) + env(safe-area-inset-top,0));z-index:150;overflow-x:auto}
-    .city-tab{flex:1;min-width:0;padding:.9rem 1.25rem;background:transparent;border:none;font-family:inherit;font-size:var(--text-sm);font-weight:700;color:var(--text-secondary);cursor:pointer;border-bottom:4px solid transparent;transition:all .15s ease;white-space:nowrap}
-    .city-tab.active{color:var(--header-bg);border-bottom-color:var(--header-bg);background:var(--bg-card)}
-    .city-tab:hover:not(.active){background:var(--bg-secondary)}
+    .city-tabs{display:flex;background:var(--bg2);border-bottom:3px solid var(--bord);position:sticky;top:calc(var(--hh) + env(safe-area-inset-top,0));z-index:150;overflow-x:auto}
+    .city-tab{flex:1;padding:.9rem 1.25rem;background:transparent;border:none;font-family:inherit;font-size:var(--sm);font-weight:700;color:var(--tx2);cursor:pointer;border-bottom:4px solid transparent;transition:all .15s;white-space:nowrap}
+    .city-tab.active{color:var(--hbg);border-bottom-color:var(--hbg);background:var(--card)}
+    .city-tab:hover:not(.active){background:var(--bg2)}
 
-    .app-main{padding-top:calc(var(--header-height) + env(safe-area-inset-top,0) + 5rem);padding-bottom:calc(2.5rem + env(safe-area-inset-bottom,0));min-height:100vh}
+    .app-main{padding-top:calc(var(--hh) + env(safe-area-inset-top,0) + 5rem);padding-bottom:calc(2.5rem + env(safe-area-inset-bottom,0));min-height:100vh}
     .city-section{display:none;padding:1.25rem .75rem;max-width:820px;margin:0 auto}
     .city-section.active{display:block}
 
-    .map-btn-wrap{margin-bottom:1.25rem}
-    .btn-open-map{width:100%;min-height:var(--btn-min);background:var(--header-bg);color:#fff;border:none;border-radius:var(--radius-lg);font-family:inherit;font-size:var(--text-base);font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.75rem;box-shadow:var(--shadow-lg);transition:all .15s ease}
-    .btn-open-map:hover{background:var(--header-border);transform:translateY(-2px)}
-    .btn-open-map .pulse{display:inline-block;width:1.1rem;height:1.1rem;background:#fff;border-radius:50%;animation:pulse-anim 1.5s infinite;flex-shrink:0}
-    @keyframes pulse-anim{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.5)}}
+    /* ── PULSANTE MAPPA ── */
+    .btn-open-map{width:100%;min-height:var(--bmin);background:var(--hbg);color:#fff;border:none;border-radius:var(--rl);font-family:inherit;font-size:var(--base);font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.75rem;box-shadow:var(--shad);transition:all .15s;margin-bottom:1.25rem}
+    .btn-open-map:hover{background:var(--hbord);transform:translateY(-2px)}
+    .pulse{display:inline-block;width:1.1rem;height:1.1rem;background:#fff;border-radius:50%;animation:pa 1.5s infinite;flex-shrink:0}
+    @keyframes pa{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.5)}}
 
-    /* MAP MODAL — usa visibility invece di display:none per evitare il bug di Leaflet */
+    /* ── MAP MODAL — visibility trick (non display:none) ── */
     .map-modal{position:fixed;inset:0;z-index:500;display:flex;flex-direction:column;background:#000;visibility:hidden;pointer-events:none}
     .map-modal.open{visibility:visible;pointer-events:auto}
-    .map-modal-header{background:var(--header-bg);color:#fff;display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;flex-shrink:0;min-height:5rem}
-    .map-modal-title{font-size:var(--text-lg);font-weight:900;flex:1}
-    .map-close-btn{background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.4);color:#fff;border-radius:var(--radius-sm);padding:.5rem 1rem;font-family:inherit;font-size:var(--text-sm);font-weight:700;cursor:pointer;min-height:3.5rem}
-    .map-close-btn:hover{background:rgba(255,255,255,.35)}
+    .map-head{background:var(--hbg);color:#fff;display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;flex-shrink:0;min-height:5rem}
+    .map-title{font-size:var(--lg);font-weight:900;flex:1}
+    .map-close{background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.4);color:#fff;border-radius:var(--rs);padding:.5rem 1rem;font-family:inherit;font-size:var(--sm);font-weight:700;cursor:pointer;min-height:3.5rem}
+    .map-close:hover{background:rgba(255,255,255,.35)}
     #map-container{flex:1;width:100%;min-height:0}
-    .map-status{background:rgba(0,0,0,.78);color:#fff;padding:.5rem 1rem;font-size:var(--text-xs);font-weight:600;text-align:center;flex-shrink:0;line-height:1.4}
+    .map-status{background:rgba(0,0,0,.82);color:#fff;padding:.6rem 1rem;font-size:var(--xs);font-weight:600;text-align:center;flex-shrink:0;line-height:1.5}
 
-    .leaflet-popup-content-wrapper{border-radius:var(--radius-md)!important;font-family:'Outfit',sans-serif!important;font-size:1.5rem!important;box-shadow:0 4px 20px rgba(0,0,0,.25)!important}
-    .popup-name{font-weight:900;font-size:1.7rem;color:var(--header-bg);margin-bottom:.25rem}
-    .popup-cat{font-size:1.2rem;color:var(--text-muted);margin-bottom:.35rem}
-    .popup-price{font-size:1.2rem;color:#374151;margin-bottom:.35rem}
-    .popup-dist{font-size:1.4rem;font-weight:700;color:var(--accent-go);margin-bottom:.4rem}
-    .popup-go{display:inline-block;background:var(--accent-go);color:#fff;padding:.35rem .9rem;border-radius:.5rem;font-weight:700;font-size:1.3rem;text-decoration:none;margin-top:.2rem}
-    .popup-go:hover{background:#15803d}
+    .leaflet-popup-content-wrapper{border-radius:var(--rm)!important;font-family:'Outfit',sans-serif!important;font-size:1.5rem!important;box-shadow:0 4px 20px rgba(0,0,0,.25)!important}
+    .pname{font-weight:900;font-size:1.7rem;color:var(--hbg);margin-bottom:.2rem}
+    .pcat{font-size:1.2rem;color:var(--muted);margin-bottom:.2rem}
+    .pprice{font-size:1.2rem;color:#374151;margin-bottom:.3rem}
+    .pdist{font-size:1.4rem;font-weight:700;color:var(--go);margin-bottom:.35rem}
+    .pgo{display:inline-block;background:var(--go);color:#fff;padding:.35rem .9rem;border-radius:.5rem;font-weight:700;font-size:1.3rem;text-decoration:none;margin-top:.2rem}
+    .pgo:hover{background:#15803d}
 
-    .search-box{background:var(--bg-card);border:2.5px solid var(--border-color);border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-bottom:1.25rem;box-shadow:var(--shadow-card);display:flex;gap:.75rem;align-items:center}
-    .search-input{flex:1;border:none;background:transparent;font-family:inherit;font-size:var(--text-base);color:var(--text-primary);outline:none}
+    .search-box{background:var(--card);border:2.5px solid var(--bord);border-radius:var(--rl);padding:1rem 1.25rem;margin-bottom:1.25rem;box-shadow:var(--shadc);display:flex;gap:.75rem;align-items:center}
+    .search-input{flex:1;border:none;background:transparent;font-family:inherit;font-size:var(--base);color:var(--tx);outline:none}
     .search-input::placeholder{color:#94a3b8}
-    .search-icon{font-size:2rem;flex-shrink:0}
-    .clear-btn{background:transparent;border:none;cursor:pointer;font-size:1.75rem;color:var(--text-muted);padding:.25rem;border-radius:50%}
-    .clear-btn:hover{background:var(--bg-secondary)}
+    .clear-btn{background:transparent;border:none;cursor:pointer;font-size:1.75rem;color:var(--muted);padding:.25rem;border-radius:50%}
+    .clear-btn:hover{background:var(--bg2)}
 
     .filter-bar{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.25rem}
-    .filter-btn{padding:.6rem 1.1rem;background:var(--bg-card);border:2px solid var(--border-color);border-radius:2rem;font-family:inherit;font-size:var(--text-xs);font-weight:700;color:var(--text-secondary);cursor:pointer;transition:all .15s ease}
-    .filter-btn.active{background:var(--header-bg);border-color:var(--header-bg);color:#fff}
-    .filter-btn:hover:not(.active){border-color:var(--header-bg);color:var(--header-bg)}
+    .filter-btn{padding:.55rem 1rem;background:var(--card);border:2px solid var(--bord);border-radius:2rem;font-family:inherit;font-size:var(--xs);font-weight:700;color:var(--tx2);cursor:pointer;transition:all .15s}
+    .filter-btn.active{background:var(--hbg);border-color:var(--hbg);color:#fff}
+    .filter-btn:hover:not(.active){border-color:var(--hbg);color:var(--hbg)}
 
-    .attractions-grid{display:flex;flex-direction:column;gap:1rem}
-    .attraction-card{background:var(--bg-card);border:2px solid var(--border-color);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-card);transition:all .15s ease}
-    .attraction-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px)}
-    .card-header{padding:1.1rem 1.25rem .75rem;display:flex;align-items:flex-start;gap:1rem}
-    .card-emoji{font-size:2.75rem;flex-shrink:0;filter:drop-shadow(0 2px 4px rgba(0,0,0,.15))}
-    .card-info{flex:1;min-width:0}
-    .card-name{font-size:var(--text-lg);font-weight:900;color:var(--text-primary);line-height:1.2;margin-bottom:.25rem}
-    .card-category{display:inline-block;padding:.2rem .75rem;background:var(--bg-secondary);border-radius:2rem;font-size:1.3rem;font-weight:700;color:var(--text-secondary);margin-bottom:.5rem}
-    .card-desc{font-size:var(--text-sm);color:#4b5563;line-height:1.6}
-    .card-meta{padding:.625rem 1.25rem;display:flex;flex-wrap:wrap;gap:.5rem;background:var(--bg-elevated);border-top:1px solid var(--border-color)}
-    .meta-badge{display:flex;align-items:center;gap:.35rem;background:var(--bg-card);border:1.5px solid var(--border-color);border-radius:var(--radius-sm);padding:.3rem .75rem;font-size:1.3rem;font-weight:600;color:var(--text-primary)}
-    .card-actions{padding:.875rem 1.25rem;display:grid;grid-template-columns:1fr 1fr;gap:.625rem;border-top:1px solid var(--border-color)}
-    .btn-nav{background:var(--accent-go);color:#fff;border:none;border-radius:var(--radius-md);padding:.875rem 1rem;font-family:inherit;font-size:var(--text-sm);font-weight:700;cursor:pointer;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:.5rem;min-height:var(--btn-min);transition:all .15s ease;grid-column:1/-1}
+    .grid{display:flex;flex-direction:column;gap:1rem}
+    .card{background:var(--card);border:2px solid var(--bord);border-radius:var(--rl);overflow:hidden;box-shadow:var(--shadc);transition:all .15s}
+    .card:hover{box-shadow:var(--shad);transform:translateY(-2px)}
+    .card-head{padding:1.1rem 1.25rem .75rem;display:flex;align-items:flex-start;gap:1rem}
+    .cemoji{font-size:2.75rem;flex-shrink:0;filter:drop-shadow(0 2px 4px rgba(0,0,0,.15))}
+    .cinfo{flex:1;min-width:0}
+    .cname{font-size:var(--lg);font-weight:900;color:var(--tx);line-height:1.2;margin-bottom:.25rem}
+    .ccat{display:inline-block;padding:.2rem .75rem;background:var(--bg2);border-radius:2rem;font-size:1.3rem;font-weight:700;color:var(--tx2);margin-bottom:.5rem}
+    .cdesc{font-size:var(--sm);color:#4b5563;line-height:1.6}
+    .card-meta{padding:.625rem 1.25rem;display:flex;flex-wrap:wrap;gap:.5rem;background:var(--elev);border-top:1px solid var(--bord)}
+    .badge{display:flex;align-items:center;gap:.35rem;background:var(--card);border:1.5px solid var(--bord);border-radius:var(--rs);padding:.3rem .75rem;font-size:1.3rem;font-weight:600;color:var(--tx)}
+    .card-act{padding:.875rem 1.25rem;display:grid;grid-template-columns:1fr 1fr;gap:.625rem;border-top:1px solid var(--bord)}
+    .btn-map{background:var(--sky);color:#fff;border:none;border-radius:var(--rm);padding:.875rem 1rem;font-family:inherit;font-size:var(--sm);font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem;min-height:var(--bmin);transition:all .15s}
+    .btn-map:hover{background:#0284c7;transform:translateY(-1px)}
+    .btn-info{background:var(--hbg);color:#fff;border:none;border-radius:var(--rm);padding:.875rem 1rem;font-family:inherit;font-size:var(--sm);font-weight:700;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:.5rem;min-height:var(--bmin);transition:all .15s}
+    .btn-info:hover{background:var(--hbord);transform:translateY(-1px)}
+    .btn-nav{background:var(--go);color:#fff;border:none;border-radius:var(--rm);padding:.875rem 1rem;font-family:inherit;font-size:var(--sm);font-weight:700;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:.5rem;min-height:var(--bmin);transition:all .15s;grid-column:1/-1}
     .btn-nav:hover{background:#15803d;transform:translateY(-1px)}
-    .btn-map-pin{background:var(--accent-secondary);color:#fff;border:none;border-radius:var(--radius-md);padding:.875rem 1rem;font-family:inherit;font-size:var(--text-sm);font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem;min-height:var(--btn-min);transition:all .15s ease}
-    .btn-map-pin:hover{background:#0284c7;transform:translateY(-1px)}
-    .btn-info{background:var(--header-bg);color:#fff;border:none;border-radius:var(--radius-md);padding:.875rem 1rem;font-family:inherit;font-size:var(--text-sm);font-weight:700;cursor:pointer;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:.5rem;min-height:var(--btn-min);transition:all .15s ease}
-    .btn-info:hover{background:var(--header-border);transform:translateY(-1px)}
 
-    .section-heading{font-size:var(--text-xl);font-weight:900;color:var(--header-bg);margin-bottom:1.25rem;display:flex;align-items:center;gap:.75rem;padding-bottom:.75rem;border-bottom:3px solid var(--border-color)}
-    .count-badge{background:var(--header-bg);color:#fff;border-radius:2rem;padding:.2rem .9rem;font-size:1.4rem;font-weight:700}
-    .no-results{text-align:center;padding:3rem 1rem;color:#94a3b8;font-size:var(--text-base)}
-    .no-results-icon{font-size:4rem;display:block;margin-bottom:1rem}
+    .sec-head{font-size:var(--xl);font-weight:900;color:var(--hbg);margin-bottom:1.25rem;display:flex;align-items:center;gap:.75rem;padding-bottom:.75rem;border-bottom:3px solid var(--bord)}
+    .cbadge{background:var(--hbg);color:#fff;border-radius:2rem;padding:.2rem .9rem;font-size:1.4rem;font-weight:700}
+    .nores{text-align:center;padding:3rem 1rem;color:#94a3b8;font-size:var(--base)}
+    .nores-icon{font-size:4rem;display:block;margin-bottom:1rem}
 
-    #toast-container{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:.5rem;pointer-events:none}
-    .toast{background:#1e293b;color:#fff;padding:1rem 1.75rem;border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:600;box-shadow:0 4px 24px rgba(0,0,0,.3);opacity:0;transform:translateY(1rem);transition:all .25s ease;pointer-events:auto;white-space:nowrap;max-width:90vw}
+    #tc{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:.5rem;pointer-events:none}
+    .toast{background:#1e293b;color:#fff;padding:1rem 1.75rem;border-radius:var(--rm);font-size:var(--sm);font-weight:600;box-shadow:0 4px 24px rgba(0,0,0,.3);opacity:0;transform:translateY(1rem);transition:all .25s;pointer-events:auto;white-space:nowrap;max-width:90vw}
     .toast.show{opacity:1;transform:translateY(0)}
-    .toast.success{border-left:4px solid var(--accent-go)}
-    .toast.info{border-left:4px solid var(--accent-secondary)}
-    .toast.error{border-left:4px solid var(--accent-danger)}
   </style>
 </head>
 <body>
 
-<header class="app-header" role="banner">
-  <span class="header-flag" aria-hidden="true">🇪🇸</span>
-  <h1 class="header-title">Madrid & Toledo</h1>
-  <span class="header-flag" aria-hidden="true">🏰</span>
+<header class="app-header">
+  <span class="hflag">🇪🇸</span>
+  <h1 class="htitle">Madrid & Toledo</h1>
+  <span class="hflag">🏰</span>
 </header>
 
-<nav class="city-tabs" role="tablist" aria-label="Seleziona città">
-  <button class="city-tab active" role="tab" aria-selected="true" id="tab-madrid" onclick="switchCity('madrid')">🏙 Madrid</button>
+<nav class="city-tabs" role="tablist">
+  <button class="city-tab active" role="tab" aria-selected="true" id="tab-madrid" onclick="switchCity('madrid')">🏙️ Madrid</button>
   <button class="city-tab" role="tab" aria-selected="false" id="tab-toledo" onclick="switchCity('toledo')">⚔️ Toledo</button>
 </nav>
 
 <main class="app-main">
-
   <section id="section-madrid" class="city-section active">
-    <h2 class="section-heading">🏙 Madrid <span class="count-badge" id="count-madrid">0</span></h2>
-    <div class="map-btn-wrap">
-      <button class="btn-open-map" onclick="openMap('madrid')">
-        <span class="pulse" aria-hidden="true"></span>
-        📍 Mappa — Dove sono e attrazioni vicine
-      </button>
-    </div>
+    <h2 class="sec-head">🏙️ Madrid <span class="cbadge" id="count-madrid">0</span></h2>
+    <button class="btn-open-map" onclick="openMap('madrid')">
+      <span class="pulse"></span>🗺️ Apri Mappa con la mia Posizione
+    </button>
     <div class="search-box">
-      <span class="search-icon" aria-hidden="true">🔍</span>
+      <span style="font-size:2rem">🔍</span>
       <input type="text" class="search-input" id="search-madrid" placeholder="Cerca attrazione, ristorante, stazione..." oninput="renderGrid('madrid')" autocomplete="off"/>
       <button class="clear-btn" onclick="clearSearch('madrid')">✕</button>
     </div>
     <div class="filter-bar" id="filters-madrid"></div>
-    <div class="attractions-grid" id="grid-madrid" aria-live="polite"></div>
+    <div class="grid" id="grid-madrid" aria-live="polite"></div>
   </section>
 
   <section id="section-toledo" class="city-section">
-    <h2 class="section-heading">⚔️ Toledo <span class="count-badge" id="count-toledo">0</span></h2>
-    <div class="map-btn-wrap">
-      <button class="btn-open-map" onclick="openMap('toledo')">
-        <span class="pulse" aria-hidden="true"></span>
-        📍 Mappa — Dove sono e attrazioni vicine
-      </button>
-    </div>
+    <h2 class="sec-head">⚔️ Toledo <span class="cbadge" id="count-toledo">0</span></h2>
+    <button class="btn-open-map" onclick="openMap('toledo')">
+      <span class="pulse"></span>🗺️ Apri Mappa con la mia Posizione
+    </button>
     <div class="search-box">
-      <span class="search-icon" aria-hidden="true">🔍</span>
+      <span style="font-size:2rem">🔍</span>
       <input type="text" class="search-input" id="search-toledo" placeholder="Cerca attrazione, ristorante, stazione..." oninput="renderGrid('toledo')" autocomplete="off"/>
       <button class="clear-btn" onclick="clearSearch('toledo')">✕</button>
     </div>
     <div class="filter-bar" id="filters-toledo"></div>
-    <div class="attractions-grid" id="grid-toledo" aria-live="polite"></div>
+    <div class="grid" id="grid-toledo" aria-live="polite"></div>
   </section>
-
 </main>
 
-<!-- MAP MODAL — usa classe .open invece di .hidden per non smontare il DOM -->
 <div id="map-modal" class="map-modal" role="dialog" aria-modal="true">
-  <div class="map-modal-header">
-    <span aria-hidden="true">🗺</span>
-    <span class="map-modal-title" id="map-modal-title">Mappa</span>
-    <button class="map-close-btn" onclick="closeMap()">✕ Chiudi</button>
+  <div class="map-head">
+    <span>🗺️</span>
+    <span class="map-title" id="map-title">Mappa</span>
+    <button class="map-close" onclick="closeMap()">✕ Chiudi</button>
   </div>
   <div class="map-status" id="map-status">In attesa…</div>
   <div id="map-container"></div>
 </div>
 
-<div id="toast-container" aria-live="polite"></div>
-<div id="sr-announce" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+<div id="tc" aria-live="polite"></div>
+<div class="sr-only" id="announce" aria-live="assertive" aria-atomic="true"></div>
 
 <script>
 'use strict';
 
-// ============================================================
-//  DATI — coordinate reali verificate
-// ============================================================
-const ATTRACTIONS = {
+// ═══════════════════════════════════════════════════════════════
+//  DATI — fonti: esmadrid.com, turismo.toledo.es, spain.info,
+//          toledoguiaturisticaycultural.com, visitmadrid.es
+// ═══════════════════════════════════════════════════════════════
+const DATA = {
   madrid: [
 
-    // ── STAZIONI ───────────────────────────────────────────
-    { id:'ms1', name:'Stazione Atocha', emoji:'🚉', category:'Stazione',
-      desc:'La principale stazione ferroviaria di Madrid. Alta velocità AVE per Toledo (33 min), Barcellona, Siviglia. All\'interno uno spettacolare giardino tropicale.',
-      orario:'Aperta sempre (treni 5:30–23:30)', prezzo:'Gratuito (biglietti treno a parte)', tempo:'–',
-      lat:40.4065, lng:-3.6892 },
-    { id:'ms2', name:'Stazione Chamartín', emoji:'🚉', category:'Stazione',
-      desc:'La seconda grande stazione di Madrid, al nord della città. Treni ad alta velocità per il nord della Spagna, Francia e Portogallo.',
-      orario:'Sempre aperta', prezzo:'Gratuito', tempo:'–',
-      lat:40.4727, lng:-3.6827 },
-    { id:'ms3', name:'Stazione Sol (Metro)', emoji:'🚇', category:'Stazione',
-      desc:'La stazione metro più centrale di Madrid, sotto la Puerta del Sol. Interscambio linee 1, 2 e 3.',
-      orario:'6–1:30 (ven-sab 6–2:00)', prezzo:'€1.50–2.00', tempo:'–',
-      lat:40.4168, lng:-3.7038 },
-    { id:'ms4', name:'Stazione Gran Vía (Metro)', emoji:'🚇', category:'Stazione',
-      desc:'Metro sulla celebre Gran Vía, linea 5. Comodissima per raggiungere il centro commerciale e teatrale di Madrid.',
-      orario:'6–1:30', prezzo:'€1.50–2.00', tempo:'–',
-      lat:40.4202, lng:-3.7054 },
-    { id:'ms5', name:'Stazione Nuevos Ministerios (Metro)', emoji:'🚇', category:'Stazione',
-      desc:'Hub strategico della metro di Madrid (linee 6, 8, 10). Collegamento diretto all\'aeroporto Barajas con linea 8 (Metro Expreso).',
-      orario:'6–1:30', prezzo:'€1.50 + supplemento aeroporto', tempo:'–',
-      lat:40.4455, lng:-3.6925 },
+    // ── STAZIONI ────────────────────────────────────────────
+    {id:'ms1',name:'Stazione di Atocha',emoji:'🚉',cat:'Stazione',
+      desc:'Principale stazione ferroviaria di Madrid. Treni AVE per Toledo (33 min), Barcellona, Siviglia. All\'interno ospita uno spettacolare giardino tropicale con tartarughe e pesci. Punto di partenza ideale del viaggio.',
+      orario:'5:30–23:30',prezzo:'Gratuito (biglietti treno a parte)',tempo:'–',lat:40.4065,lng:-3.6892},
+    {id:'ms2',name:'Stazione di Chamartín',emoji:'🚉',cat:'Stazione',
+      desc:'Grande stazione del nord di Madrid con treni per il nord della Spagna, Francia e Portogallo. Hub dei Cercanías suburbani. Si raggiunge con Metro linea 10.',
+      orario:'Sempre aperta',prezzo:'Gratuito',tempo:'–',lat:40.4727,lng:-3.6827},
+    {id:'ms3',name:'Metro Puerta del Sol',emoji:'🚇',cat:'Stazione',
+      desc:'La stazione metro più centrale di Madrid (linee 1, 2, 3). Accesso diretto alla Puerta del Sol, cuore e chilometro zero della Spagna.',
+      orario:'6:00–1:30 (ven–sab 6:00–2:00)',prezzo:'€1.50–2.00',tempo:'–',lat:40.4168,lng:-3.7038},
+    {id:'ms4',name:'Metro Gran Vía',emoji:'🚇',cat:'Stazione',
+      desc:'Metro sulla celebre Gran Vía, linea 5. Accesso ideale per teatri, cinema e shopping nel boulevard più famoso di Madrid.',
+      orario:'6:00–1:30',prezzo:'€1.50–2.00',tempo:'–',lat:40.4202,lng:-3.7054},
+    {id:'ms5',name:'Metro Nuevos Ministerios',emoji:'🚇',cat:'Stazione',
+      desc:'Hub metro (linee 6, 8, 10). Collegamento diretto all\'Aeroporto Adolfo Suárez Barajas con Metro Expreso Línea 8 in soli 12 minuti.',
+      orario:'6:00–1:30',prezzo:'€1.50 + supplemento aeroporto',tempo:'–',lat:40.4455,lng:-3.6925},
+    {id:'ms6',name:'Metro Banco de España',emoji:'🚇',cat:'Stazione',
+      desc:'Metro linea 2. A 2 minuti dalla Fontana di Cibeles e dal Paseo del Prado. Punto di accesso ideale per il Triangolo dell\'Arte (Prado, Thyssen, Reina Sofía).',
+      orario:'6:00–1:30',prezzo:'€1.50–2.00',tempo:'–',lat:40.4191,lng:-3.6945},
+    {id:'ms7',name:'Metro Opera',emoji:'🚇',cat:'Stazione',
+      desc:'Metro linee 2 e 5. A pochi passi dal Palazzo Reale, dal Teatro Real e dalla Plaza de Oriente. Zona più elegante e storica di Madrid.',
+      orario:'6:00–1:30',prezzo:'€1.50–2.00',tempo:'–',lat:40.4185,lng:-3.7118},
 
-    // ── MUSEI ──────────────────────────────────────────────
-    { id:'m1', name:'Museo del Prado', emoji:'🖼️', category:'Museo',
-      desc:'Uno dei più grandi musei d\'arte al mondo. Capolavori di Velázquez, Goya e Rubens. Assolutamente imprescindibile.',
-      orario:'Lun–Sab 10–20, Dom 10–19', prezzo:'€15 (gratis lun–sab 18–20)', tempo:'2–3 ore',
-      lat:40.4138, lng:-3.6921 },
-    { id:'m2', name:'Museo Reina Sofía', emoji:'🎨', category:'Museo',
-      desc:'Arte contemporanea spagnola: il "Guernica" di Picasso, Dalí, Miró. Edificio storico con torre di vetro di Nouvel.',
-      orario:'Lun, Mer–Sab 10–21, Dom 10–14:30', prezzo:'€12 (gratis sab 19+)', tempo:'2–3 ore',
-      lat:40.4085, lng:-3.6943 },
-    { id:'m3', name:'Museo Thyssen-Bornemisza', emoji:'🏛️', category:'Museo',
-      desc:'Il terzo vertice del triangolo dell\'arte. Dall\'arte medievale all\'impressionismo e al pop art. Collezione privata straordinaria.',
-      orario:'Mar–Dom 10–19 (sab 10–21)', prezzo:'€13', tempo:'2 ore',
-      lat:40.4153, lng:-3.6941 },
-    { id:'m4', name:'Museo Arqueológico Nacional', emoji:'🏺', category:'Museo',
-      desc:'Archeologia spagnola dalla preistoria all\'età moderna. La Dama de Elche, reperti iberici, romani e visigoti.',
-      orario:'Mar–Sab 9:30–20, Dom 9:30–15', prezzo:'€3', tempo:'1.5 ore',
-      lat:40.4226, lng:-3.6889 },
-    { id:'m5', name:'Museo Sorolla', emoji:'☀️', category:'Museo',
-      desc:'Casa-museo del pittore valenciano Joaquín Sorolla. Giardini andalusi meravigliosi e luce mediterranea nei dipinti.',
-      orario:'Mar–Sab 9:30–20, Dom 10–15', prezzo:'€3', tempo:'1 ora',
-      lat:40.4342, lng:-3.6978 },
-    { id:'m6', name:'Museo Nacional de Ciencias Naturales', emoji:'🦕', category:'Museo',
-      desc:'Dinosauri, minerali, fauna mondiale e collezioni naturalistiche. Perfetto per famiglie e appassionati di scienze.',
-      orario:'Mar–Ven 10–17, Sab–Dom 10–20', prezzo:'€6', tempo:'1.5 ore',
-      lat:40.4392, lng:-3.6963 },
+    // ── MUSEI ───────────────────────────────────────────────
+    {id:'m1',name:'Museo del Prado',emoji:'🖼️',cat:'Museo',
+      desc:'Uno dei più grandi musei d\'arte al mondo (fonte: esmadrid.com). Capolavori di Velázquez ("Las Meninas"), Goya ("Tres de Mayo"), Rubens, Tiziano, Bosch ("Il Giardino delle Delizie"). 8.000 opere.',
+      orario:'Lun–Sab 10–20, Dom 10–19',prezzo:'€15 (gratis lun–sab 18–20)',tempo:'2–3 ore',lat:40.4138,lng:-3.6921},
+    {id:'m2',name:'Museo Reina Sofía',emoji:'🎨',cat:'Museo',
+      desc:'Arte contemporanea spagnola: il "Guernica" di Picasso, sculture di Calder, Dalí e Miró. Edificio storico ampliato da Jean Nouvel. Fonte: esmadrid.com.',
+      orario:'Lun, Mer–Sab 10–21, Dom 10–14:30',prezzo:'€12 (gratis sab 19+)',tempo:'2–3 ore',lat:40.4085,lng:-3.6943},
+    {id:'m3',name:'Museo Thyssen-Bornemisza',emoji:'🏛️',cat:'Museo',
+      desc:'Il terzo vertice del "Triangolo dell\'Arte". Dall\'arte medievale all\'Impressionismo: Van Eyck, Caravaggio, Monet, Renoir, Hopper. Una delle più ricche collezioni private al mondo.',
+      orario:'Mar–Dom 10–19 (sab 10–21)',prezzo:'€13',tempo:'2 ore',lat:40.4153,lng:-3.6941},
+    {id:'m4',name:'Museo Arqueológico Nacional',emoji:'🏺',cat:'Museo',
+      desc:'La Dama de Elche e la Dama de Baza, reperti iberici, romani, visigoti e arabi. La storia della Penisola Iberica dalla preistoria al Rinascimento.',
+      orario:'Mar–Sab 9:30–20, Dom 9:30–15',prezzo:'€3',tempo:'1.5 ore',lat:40.4226,lng:-3.6889},
+    {id:'m5',name:'Museo Sorolla',emoji:'☀️',cat:'Museo',
+      desc:'Casa-museo del pittore valenciano Joaquín Sorolla, "il pittore della luce" (fonte: esmadrid.com). Giardini andalusi magnifici nella sua dimora. Impressionismo luminoso e mediterraneo.',
+      orario:'Mar–Sab 9:30–20, Dom 10–15',prezzo:'€3',tempo:'1 ora',lat:40.4342,lng:-3.6978},
+    {id:'m6',name:'Museo del Romanticismo',emoji:'💌',cat:'Museo',
+      desc:'Dimora nobiliare dell\'Ottocento con arredi, dipinti e oggetti dell\'epoca romantica completamente intatti. Come entrare in un quadro di Goya. Poco conosciuto, molto bello.',
+      orario:'Mar–Sab 9:30–20:30, Dom 10–15',prezzo:'€3',tempo:'1 ora',lat:40.4262,lng:-3.7010},
+    {id:'m7',name:'Museo Naval',emoji:'⚓',cat:'Museo',
+      desc:'Storia navale spagnola dal Medioevo ad oggi. Qui si conserva la prima mappa conosciuta dell\'America (Juan de la Cosa, 1500). Gratuito e spesso trascurato dai turisti.',
+      orario:'Mar–Dom 10–19',prezzo:'Gratuito',tempo:'1 ora',lat:40.4184,lng:-3.6940},
+    {id:'m8',name:'Museo Lázaro Galdiano',emoji:'💎',cat:'Museo',
+      desc:'Una delle collezioni private più eccentriche d\'Europa: avori medievali, gioielli, armi, smalti, orologi e dipinti di Goya, El Greco e Constable in una villa liberty.',
+      orario:'Mar–Dom 10–15',prezzo:'€7',tempo:'1.5 ore',lat:40.4363,lng:-3.6856},
+    {id:'m9',name:'Real Academia de Bellas Artes',emoji:'🎭',cat:'Museo',
+      desc:'Terza pinacoteca di Madrid dopo Prado e Thyssen. Rubens, Velázquez, Zurbarán, Goya (autoritratti). In un palazzo barocco sulla Calle Alcalá dal 1752.',
+      orario:'Mar–Dom 10–15',prezzo:'€8',tempo:'1 ora',lat:40.4176,lng:-3.6995},
+    {id:'m10',name:'Museo Ferroviario (Delicias)',emoji:'🚂',cat:'Museo',
+      desc:'Prima stazione monumentale di Madrid (1880), oggi museo con locomotive storiche, la storia delle ferrovie spagnole e il famoso treno Al-Andalus. Vicino a Madrid Río.',
+      orario:'Mar–Dom 10–15',prezzo:'€6',tempo:'1.5 ore',lat:40.3980,lng:-3.6938},
+    {id:'m11',name:'CaixaForum Madrid',emoji:'🏭',cat:'Museo',
+      desc:'Centro culturale straordinario in un ex centrale elettrica del 1900, con il celebre giardino verticale di Patrick Blanc. Mostre temporanee di altissimo livello. Accesso gratuito alla plaza.',
+      orario:'Lun–Dom 10–20',prezzo:'€6 mostre',tempo:'1.5 ore',lat:40.4091,lng:-3.6928},
+    {id:'m12',name:'Museo Reale di Geologia',emoji:'🦕',cat:'Museo',
+      desc:'Oltre all\'importante patrimonio geologico e paleontologico, il museo si trova in un edificio del 1927. Dinosauri, minerali rari e fossili. Ottimo per famiglie.',
+      orario:'Mar–Ven 10–17, Sab–Dom 10–20',prezzo:'€3',tempo:'1.5 ore',lat:40.4392,lng:-3.6963},
 
-    // ── MONUMENTI & PALAZZI ────────────────────────────────
-    { id:'m7', name:'Palazzo Reale', emoji:'👑', category:'Monumento',
-      desc:'Con 3.418 stanze, uno dei palazzi reali più grandi d\'Europa. Residenza ufficiale del re di Spagna.',
-      orario:'Lun–Dom 10–20 (inverno 10–18)', prezzo:'€14', tempo:'1–2 ore',
-      lat:40.4179, lng:-3.7144 },
-    { id:'m8', name:'Templo de Debod', emoji:'🛕', category:'Monumento',
-      desc:'Tempio egizio del II sec. a.C. donato dall\'Egitto alla Spagna. Vista spettacolare al tramonto verso il Palazzo Reale.',
-      orario:'Mar–Dom 10–14, 18–20', prezzo:'Gratuito', tempo:'45 min',
-      lat:40.4228, lng:-3.7181 },
-    { id:'m9', name:'Palacio de Cristal', emoji:'🪟', category:'Monumento',
-      desc:'Elegante struttura in ferro e vetro del 1887 nel Parco del Retiro. Sede di mostre temporanee del Reina Sofía.',
-      orario:'Lun–Dom 10–22 (inverno 10–18)', prezzo:'Gratuito', tempo:'45 min',
-      lat:40.4145, lng:-3.6830 },
-    { id:'m10', name:'Catedral de la Almudena', emoji:'⛪', category:'Chiesa',
-      desc:'La cattedrale di Madrid, consacrata nel 1993. Architettura eclettica di fronte al Palazzo Reale. Terrazza con vista panoramica.',
-      orario:'Lun–Dom 9–20:30', prezzo:'Gratuita (cripta €1)', tempo:'30–45 min',
-      lat:40.4154, lng:-3.7145 },
-    { id:'m11', name:'Basílica de San Francisco el Grande', emoji:'🕌', category:'Chiesa',
-      desc:'Una delle cupole più grandi al mondo (33 m). Dipinti di Goya e arte religiosa barocca straordinaria.',
-      orario:'Mar–Dom 10:30–12:30, 16–18', prezzo:'€3', tempo:'1 ora',
-      lat:40.4114, lng:-3.7137 },
+    // ── MONUMENTI ───────────────────────────────────────────
+    {id:'p1',name:'Palazzo Reale',emoji:'👑',cat:'Monumento',
+      desc:'Il più grande palazzo reale dell\'Europa occidentale: 135.000 mq, 3.418 stanze, quasi il doppio di Buckingham Palace (fonte: visitmadrid.es). Cambio della guardia mer e sab. Audioguida consigliata.',
+      orario:'Lun–Dom 10–20 (inverno 10–18)',prezzo:'€14 (gratis lun–sab 17–18)',tempo:'1–2 ore',lat:40.4179,lng:-3.7144},
+    {id:'p2',name:'Puerta de Alcalá',emoji:'🏛️',cat:'Monumento',
+      desc:'Il primo arco di trionfo europeo moderno (1778), precedendo di 38 anni quello di Parigi (fonte: esmadrid.com). Progettato da Sabatini per Carlo III. Cinque fornici. Simbolo di Madrid.',
+      orario:'Sempre aperta',prezzo:'Gratuita',tempo:'15 min',lat:40.4199,lng:-3.6886},
+    {id:'p3',name:'Fontana di Cibeles',emoji:'⛲',cat:'Monumento',
+      desc:'Il simbolo di Madrid per eccellenza (1782). La dea Cibele su carro trainato da leoni. I tifosi del Real Madrid celebrano le vittorie qui. Tra i monumenti più fotografati della Spagna.',
+      orario:'Sempre aperta',prezzo:'Gratuita',tempo:'20 min',lat:40.4194,lng:-3.6930},
+    {id:'p4',name:'Fontana di Nettuno',emoji:'🔱',cat:'Monumento',
+      desc:'Bellissimo monumento neoclassico in marmo bianco (fonte: esmadrid.com). I tifosi dell\'Atlético de Madrid festeggiano qui. Di fronte al Museo Thyssen, a pochi passi dal Prado.',
+      orario:'Sempre aperta',prezzo:'Gratuita',tempo:'15 min',lat:40.4157,lng:-3.6928},
+    {id:'p5',name:'Templo de Debod',emoji:'🛕',cat:'Monumento',
+      desc:'Tempio egizio del II sec. a.C. donato dall\'Egitto alla Spagna nel 1968. Uno dei "tesori nascosti" di Madrid (fonte: esmadrid.com). Vista spettacolare al tramonto verso il Palazzo Reale.',
+      orario:'Mar–Dom 10–14, 18–20',prezzo:'Gratuito',tempo:'45 min',lat:40.4228,lng:-3.7181},
+    {id:'p6',name:'Palacio de Cristal del Retiro',emoji:'🪟',cat:'Monumento',
+      desc:'Elegante struttura in ferro e vetro del 1887 nel Parco del Retiro. Uno dei migliori esempi di "architettura del ferro" a Madrid (fonte: esmadrid.com). Sede di mostre del Reina Sofía.',
+      orario:'Lun–Dom 10–22 (inverno 10–18)',prezzo:'Gratuito',tempo:'45 min',lat:40.4145,lng:-3.6830},
+    {id:'p7',name:'Plaza de Oriente',emoji:'🌹',cat:'Monumento',
+      desc:'La piazza più elegante di Madrid, tra il Palazzo Reale e il Teatro Real. Statua equestre di Filippo IV, unica al mondo con il cavallo impennato regretto da Galileo Galilei. Giardini impeccabili.',
+      orario:'Sempre aperta',prezzo:'Gratuita',tempo:'20 min',lat:40.4185,lng:-3.7139},
+    {id:'p8',name:'Faro de Moncloa',emoji:'🔭',cat:'Monumento',
+      desc:'Belvedere a 92 metri di altezza con vista panoramica a 360° su Madrid (fonte: esmadrid.com). Biglietto acquistabile online. Una delle migliori viste sulla città.',
+      orario:'Mar–Dom 10–14, 17–20',prezzo:'€3',tempo:'30 min',lat:40.4437,lng:-3.7193},
+    {id:'p9',name:'Arco de la Victoria',emoji:'🏛️',cat:'Monumento',
+      desc:'Arco di trionfo del 1956 all\'ingresso della Città Universitaria. Simile all\'Arco di Trionfo di Parigi. Zona universitaria e Moncloa, vicino al Faro.',
+      orario:'Sempre aperto',prezzo:'Gratuito',tempo:'10 min',lat:40.4420,lng:-3.7198},
 
-    // ── PIAZZE & QUARTIERI ─────────────────────────────────
-    { id:'m12', name:'Plaza Mayor', emoji:'🏟️', category:'Piazza',
-      desc:'Il cuore storico di Madrid. Piazza porticata del XVII secolo con la statua equestre di Filippo III al centro.',
-      orario:'Sempre aperta', prezzo:'Gratuita', tempo:'30–60 min',
-      lat:40.4154, lng:-3.7074 },
-    { id:'m13', name:'Puerta del Sol', emoji:'☀️', category:'Piazza',
-      desc:'Il chilometro zero di tutta la Spagna. La piazza più famosa di Madrid: l\'orso con il corbezzolo è il simbolo cittadino.',
-      orario:'Sempre aperta', prezzo:'Gratuita', tempo:'20 min',
-      lat:40.4167, lng:-3.7033 },
-    { id:'m14', name:'Plaza de España', emoji:'🗿', category:'Piazza',
-      desc:'Grande piazza con monumento a Cervantes: Don Chisciotte e Sancho Panza in bronzo. Recentemente restaurata con grandi spazi verdi.',
-      orario:'Sempre aperta', prezzo:'Gratuita', tempo:'20 min',
-      lat:40.4232, lng:-3.7124 },
-    { id:'m15', name:'Barrio de La Latina', emoji:'🍷', category:'Quartiere',
-      desc:'Il quartiere storico più autentico di Madrid. Strade medievali, tapas bar e la domenica il celebre Rastro.',
-      orario:'Sempre aperto', prezzo:'Gratuito', tempo:'1–3 ore',
-      lat:40.4115, lng:-3.7098 },
-    { id:'m16', name:'Barrio de Malasaña', emoji:'🎸', category:'Quartiere',
-      desc:'Quartiere bohémien, cuore della Movida madrilena degli anni \'80. Bar vintage, murales e street food.',
-      orario:'Sempre aperto', prezzo:'Gratuito', tempo:'1–2 ore',
-      lat:40.4268, lng:-3.7063 },
-    { id:'m17', name:'Barrio de Chueca', emoji:'🌈', category:'Quartiere',
-      desc:'Quartiere cosmopolita e vivace. Negozi di design, ristoranti trendy e vita notturna vivacissima.',
-      orario:'Sempre aperto', prezzo:'Gratuito', tempo:'1–2 ore',
-      lat:40.4237, lng:-3.6985 },
-    { id:'m18', name:'Lavapiés', emoji:'🌍', category:'Quartiere',
-      desc:'Il quartiere multiculturale di Madrid. Street art, locali alternativi, cultura indie e gastronomia internazionale a prezzi bassi.',
-      orario:'Sempre aperto', prezzo:'Gratuito', tempo:'1–2 ore',
-      lat:40.4083, lng:-3.7013 },
+    // ── CHIESE ──────────────────────────────────────────────
+    {id:'c1',name:'Catedral de la Almudena',emoji:'⛪',cat:'Chiesa',
+      desc:'La cattedrale di Madrid, consacrata nel 1993 da Giovanni Paolo II. Cripta neoromanica del XII sec. sotto il tempio (fonte: esmadrid.com). Architettura eclettica di fronte al Palazzo Reale.',
+      orario:'Lun–Dom 9–20:30',prezzo:'Gratuita (cripta €1)',tempo:'30–45 min',lat:40.4154,lng:-3.7145},
+    {id:'c2',name:'Basílica San Francisco el Grande',emoji:'🕌',cat:'Chiesa',
+      desc:'Cupola di 33 metri, tra le più grandi al mondo (più grande del Pantheon di Roma). Affreschi di Goya in una delle prime chiese. Collezione d\'arte sacra straordinaria.',
+      orario:'Mar–Dom 10:30–12:30, 16–18',prezzo:'€3',tempo:'1 ora',lat:40.4114,lng:-3.7137},
+    {id:'c3',name:'Iglesia de San Ginés',emoji:'⛪',cat:'Chiesa',
+      desc:'Una delle chiese più antiche di Madrid (XI sec.). Ospita dipinti di El Greco e Van Dyck. Proprio dietro c\'è la celeberrima Chocolatería San Ginés, aperta dal 1894.',
+      orario:'Lun–Sab 8:30–13, 18–21; Dom 9:30–14, 18–21',prezzo:'Gratuita',tempo:'20 min',lat:40.4156,lng:-3.7066},
 
-    // ── VERDE & SPORT ──────────────────────────────────────
-    { id:'m19', name:'Parque del Retiro', emoji:'🌳', category:'Parco',
-      desc:'Il "Central Park" di Madrid: 118 ettari di verde con lago, barche, il Palacio de Cristal e moltissime sculture.',
-      orario:'6–24 (inverno 6–22)', prezzo:'Gratuito', tempo:'1–3 ore',
-      lat:40.4153, lng:-3.6844 },
-    { id:'m20', name:'Casa de Campo', emoji:'🌲', category:'Parco',
-      desc:'Il parco più grande di Madrid (1.722 ettari). Lago, zoo, parco divertimenti Warner e sentieri naturalistici.',
-      orario:'Sempre aperto', prezzo:'Gratuito', tempo:'2–4 ore',
-      lat:40.4061, lng:-3.7431 },
-    { id:'m21', name:'Estadio Santiago Bernabéu', emoji:'⚽', category:'Sport',
-      desc:'La cattedrale del calcio mondiale, stadio del Real Madrid. Ristrutturato con tecnologie all\'avanguardia. Tour tutto l\'anno.',
-      orario:'Lun–Sab 9:30–19, Dom 10–18:30', prezzo:'Tour €25', tempo:'1–2 ore',
-      lat:40.4530, lng:-3.6883 },
+    // ── PIAZZE ──────────────────────────────────────────────
+    {id:'z1',name:'Plaza Mayor',emoji:'🏟️',cat:'Piazza',
+      desc:'Il cuore storico di Madrid. Piazza porticata del XVII sec. con la statua equestre di Filippo III (fonte: esmadrid.com). Ogni anno ospita il più grande mercatino di Natale di Madrid.',
+      orario:'Sempre aperta',prezzo:'Gratuita',tempo:'30–60 min',lat:40.4154,lng:-3.7074},
+    {id:'z2',name:'Puerta del Sol',emoji:'☀️',cat:'Piazza',
+      desc:'Il Km 0 di tutte le strade di Spagna. La statua dell\'Orso col Corbezzolo è il simbolo di Madrid (fonte: esmadrid.com). Capodanno con 12 uva allo scoccare della mezzanotte.',
+      orario:'Sempre aperta',prezzo:'Gratuita',tempo:'20 min',lat:40.4167,lng:-3.7033},
+    {id:'z3',name:'Plaza de Cibeles',emoji:'🏛️',cat:'Piazza',
+      desc:'Una delle piazze più belle di Madrid. Fontana di Cibeles, Palazzo della Cibele (Municipio), Palazzo Buenavista e il Banco di Spagna. Cuore del Paseo de las Artes.',
+      orario:'Sempre aperta',prezzo:'Gratuita',tempo:'20 min',lat:40.4194,lng:-3.6930},
+    {id:'z4',name:'Plaza de España',emoji:'📖',cat:'Piazza',
+      desc:'Grande piazza con monumento a Cervantes: Don Chisciotte e Sancho Panza in bronzo (fonte: esmadrid.com). Recentemente ristrutturata con ampi spazi verdi. Grattacielo Edificio España.',
+      orario:'Sempre aperta',prezzo:'Gratuita',tempo:'20 min',lat:40.4232,lng:-3.7124},
+    {id:'z5',name:'Plaza de Santa Ana',emoji:'🍸',cat:'Piazza',
+      desc:'La piazza più vivace del Barrio de las Letras. Bar e terrazze storici come Cervecería Alemana (frequentata da Hemingway), statue di Lorca e Calderón de la Barca.',
+      orario:'Sempre aperta',prezzo:'Gratuita',tempo:'1 ora',lat:40.4145,lng:-3.7005},
+    {id:'z6',name:'Plaza de Colón',emoji:'🌍',cat:'Piazza',
+      desc:'Grande piazza con la colonna dedicata a Cristoforo Colombo. Le famose cascate artificiali. Centro culturale sotterraneo. Zona Salamanca, il quartiere più elegante.',
+      orario:'Sempre aperta',prezzo:'Gratuita',tempo:'15 min',lat:40.4280,lng:-3.6893},
+    {id:'z7',name:'Plaza del Callao',emoji:'🎬',cat:'Piazza',
+      desc:'Il principale punto di incontro della Gran Vía (fonte: esmadrid.com). Circondato da cinema storici, il palazzo Schweppes con insegna luminosa e l\'edificio Carrión. Cuore dello shopping.',
+      orario:'Sempre aperta',prezzo:'Gratuita',tempo:'15 min',lat:40.4196,lng:-3.7038},
+    {id:'z8',name:'Plaza de la Villa',emoji:'🏰',cat:'Piazza',
+      desc:'La piccola piazza medievale più antica di Madrid, con la Casa de la Villa (ex municipio del 1664) e la Casa de los Lujanes del XV sec. Un angolo autentico del Madrid dei Asburgo.',
+      orario:'Sempre aperta',prezzo:'Gratuita',tempo:'20 min',lat:40.4148,lng:-3.7094},
 
-    // ── SHOPPING & MERCATI ─────────────────────────────────
-    { id:'m22', name:'Gran Vía', emoji:'🛍️', category:'Shopping',
-      desc:'Il boulevard più famoso di Madrid. Grattacieli d\'inizio 900, teatri, cinema, negozi e ristoranti. La "Broadway spagnola".',
-      orario:'Sempre aperta', prezzo:'Gratuita', tempo:'1–2 ore',
-      lat:40.4203, lng:-3.7057 },
-    { id:'m23', name:'El Rastro', emoji:'🛒', category:'Mercato',
-      desc:'Il più grande mercato delle pulci di Madrid, ogni domenica mattina nel quartiere La Latina dal XVI secolo.',
-      orario:'Dom 9–15', prezzo:'Gratuito', tempo:'2 ore',
-      lat:40.4097, lng:-3.7087 },
-    { id:'m24', name:'Mercado de San Miguel', emoji:'🍢', category:'Gastronomia',
-      desc:'Il mercato gastronomico più famoso di Madrid. Struttura in ferro del 1916 con tapas, vino, jamón ibérico e dolci.',
-      orario:'Lun–Dom 10–24', prezzo:'Gratuito (cibo a parte)', tempo:'1 ora',
-      lat:40.4152, lng:-3.7088 },
-    { id:'m25', name:'Mercado de San Antón', emoji:'🧆', category:'Gastronomia',
-      desc:'Mercato su tre piani nel cuore di Chueca. Piano terra prodotti freschi, piano superiore bar e ristoranti alla moda.',
-      orario:'Lun–Sab 10–22, Dom 11–16', prezzo:'Gratuito', tempo:'1 ora',
-      lat:40.4232, lng:-3.6982 },
+    // ── QUARTIERI ───────────────────────────────────────────
+    {id:'q1',name:'Barrio de La Latina',emoji:'🍷',cat:'Quartiere',
+      desc:'Il quartiere storico più autentico di Madrid, tra archi medievali e taverne centenarie. Ogni domenica mattina il celebre mercato El Rastro. Il miglior barrio per tapas.',
+      orario:'Sempre aperto',prezzo:'Gratuito',tempo:'1–3 ore',lat:40.4115,lng:-3.7098},
+    {id:'q2',name:'Barrio de Malasaña',emoji:'🎸',cat:'Quartiere',
+      desc:'Cuore della Movida madrilena degli anni \'80. Bar vintage, murales, gallerie d\'arte, negozi di vinili e aperitivi creativi. Bohémien, giovane e vivacissimo.',
+      orario:'Sempre aperto',prezzo:'Gratuito',tempo:'1–2 ore',lat:40.4268,lng:-3.7063},
+    {id:'q3',name:'Barrio de Chueca',emoji:'🌈',cat:'Quartiere',
+      desc:'Quartiere cosmopolita e alla moda. Negozi di design, ristoranti trendy, il Mercado de San Antón e una vita notturna tra le più animate di Madrid.',
+      orario:'Sempre aperto',prezzo:'Gratuito',tempo:'1–2 ore',lat:40.4237,lng:-3.6985},
+    {id:'q4',name:'Barrio de las Letras',emoji:'📚',cat:'Quartiere',
+      desc:'Il quartiere dei letterati: Cervantes, Lope de Vega e Quevedo vissero qui. Piastrelle con versi sui marciapiedi, librerie antiquarie e caffè letterari. Fonte: esmadrid.com.',
+      orario:'Sempre aperto',prezzo:'Gratuito',tempo:'1–2 ore',lat:40.4137,lng:-3.6995},
+    {id:'q5',name:'Lavapiés',emoji:'🌍',cat:'Quartiere',
+      desc:'Il quartiere multiculturale di Madrid: 73 nazionalità diverse. Street art, cinema d\'essai, cucine di tutto il mondo e prezzi contenuti. Scoperta autentica lontana dal turismo.',
+      orario:'Sempre aperto',prezzo:'Gratuito',tempo:'1–2 ore',lat:40.4083,lng:-3.7013},
+    {id:'q6',name:'Barrio de Salamanca',emoji:'💼',cat:'Quartiere',
+      desc:'Il quartiere elegante e borghese di Madrid. Calle Serrano è la "via della moda" spagnola con boutique di lusso. Musei interessanti e ristoranti raffinati.',
+      orario:'Sempre aperto',prezzo:'Gratuito',tempo:'1–2 ore',lat:40.4300,lng:-3.6820},
 
-    // ── RISTORANTI ─────────────────────────────────────────
-    { id:'mr1', name:'Sobrino de Botín', emoji:'🍖', category:'Ristorante',
-      desc:'Il ristorante più antico del mondo (1725, Guinness). Specialità: cochinillo asado (maialino da latte) e cordero al forno. Prenotazione obbligatoria.',
-      orario:'Lun–Dom 13–16, 20–24', prezzo:'€35–50 a persona', tempo:'1.5–2 ore',
-      lat:40.4140, lng:-3.7075 },
-    { id:'mr2', name:'Casa Lucio', emoji:'🍳', category:'Ristorante',
-      desc:'Istituzione madrilena dal 1974. Famoso per gli "huevos rotos" (uova rotte su patate fritte). Frequentato da re e presidenti.',
-      orario:'Lun–Ven 13–16, 21–24; Sab–Dom 13–16:30', prezzo:'€30–45 pp', tempo:'1.5 ore',
-      lat:40.4126, lng:-3.7094 },
-    { id:'mr3', name:'Chocolatería San Ginés', emoji:'☕', category:'Ristorante',
-      desc:'Dal 1894. Il posto più famoso per churros con cioccolata calda densa. Aperto 24 ore su 24, 7 giorni su 7. Imprescindibile!',
-      orario:'24 ore', prezzo:'€5–8 pp', tempo:'30 min',
-      lat:40.4154, lng:-3.7070 },
-    { id:'mr4', name:'La Barraca', emoji:'🥘', category:'Ristorante',
-      desc:'Il miglior posto per la paella valenciana autentica a Madrid. In centro dal 1935. Decorazioni tipiche valenciane.',
-      orario:'Lun–Dom 13–16, 20:30–23:30', prezzo:'€25–35 pp', tempo:'1.5 ore',
-      lat:40.4182, lng:-3.7002 },
-    { id:'mr5', name:'Estado Puro', emoji:'🦐', category:'Ristorante',
-      desc:'Tapas moderne dello chef Paco Roncero. Selezione di vini eccellente. Design contemporaneo vicino al Prado.',
-      orario:'Mar–Sab 13–16, 20:30–23', prezzo:'€30–40 pp', tempo:'1.5 ore',
-      lat:40.4165, lng:-3.6953 },
-    { id:'mr6', name:'Bar El Tigre', emoji:'🍺', category:'Ristorante',
-      desc:'Bar iconico a Chueca: la birra viene servita con tapas gratis abbondantissime. Sempre affollatissimo, prezzi stracciati.',
-      orario:'Lun–Dom 10–24', prezzo:'€5–10 pp', tempo:'1 ora',
-      lat:40.4235, lng:-3.6980 },
-    { id:'mr7', name:'La Musa de Espronceda', emoji:'🥑', category:'Ristorante',
-      desc:'Brunch e tapas moderne in atmosfera rilassata a Malasaña. Molto amato dai locali, ottimo rapporto qualità-prezzo.',
-      orario:'Lun–Dom 9:30–1', prezzo:'€15–25 pp', tempo:'1 ora',
-      lat:40.4290, lng:-3.7047 },
-    { id:'mr8', name:'Taberna La Daniela', emoji:'🦑', category:'Ristorante',
-      desc:'Taberna storica madrilena. Cocido madrileño autentico (ceci con carne, il piatto tipico cittadino) e raciones classiche.',
-      orario:'Lun–Dom 13–16:30, 20:30–24', prezzo:'€20–30 pp', tempo:'1.5 ore',
-      lat:40.4180, lng:-3.6940 },
+    // ── CENTRI CULTURALI & VISTE ────────────────────────────
+    {id:'cc1',name:'Círculo de Bellas Artes',emoji:'🎪',cat:'Cultura',
+      desc:'Uno dei centri culturali più importanti d\'Europa (1926). Mostre, concerti, cinema, teatro, libreria. Fonte: esmadrid.com. La terrazza sul tetto offre una delle viste più belle di Madrid (€5.50).',
+      orario:'Mar–Dom 10–14, 17–21; terrazza 10–1',prezzo:'€5.50 terrazza',tempo:'1.5 ore',lat:40.4182,lng:-3.6984},
+    {id:'cc2',name:'Palazzo della Cibele (CentroCentro)',emoji:'🏛️',cat:'Cultura',
+      desc:'Ex Palazzo delle Poste del 1919, oggi sede del Municipio e centro culturale. Belvedere gratuito a 360° sulla Cibeles e sulla Gran Vía. Una delle migliori viste di Madrid.',
+      orario:'Mar–Dom 10–20',prezzo:'Belvedere €3',tempo:'1 ora',lat:40.4194,lng:-3.6923},
+    {id:'cc3',name:'Matadero Madrid',emoji:'🏭',cat:'Cultura',
+      desc:'Ex macello industriale del 1920 trasformato in centro culturale d\'avanguardia. Festival, concerti all\'aperto, mostre contemporanee e il parco fluviale Madrid Río accanto.',
+      orario:'Mar–Dom 11–21',prezzo:'Gratuito',tempo:'1–2 ore',lat:40.3945,lng:-3.6955},
+    {id:'cc4',name:'Teatro Real',emoji:'🎻',cat:'Cultura',
+      desc:'Il teatro dell\'opera di Madrid, inaugurato nel 1850. Uno dei più importanti d\'Europa, con 1.700 posti. Visite guidate tutto il giorno. Di fronte alla Plaza de Oriente.',
+      orario:'Visite: Lun–Ven 10:30–13, Sab–Dom 10:30–13:30',prezzo:'Visita €9; opera da €30',tempo:'1 ora',lat:40.4186,lng:-3.7147},
+
+    // ── VERDE & SPORT ───────────────────────────────────────
+    {id:'v1',name:'Parque del Retiro',emoji:'🌳',cat:'Parco',
+      desc:'Il polmone verde di Madrid: 118 ettari Patrimonio UNESCO (fonte: visitmadrid.es). Lago con barche a noleggio, Palacio de Cristal, sculture, la Statua del Diavolo Caduto (unica al mondo).',
+      orario:'6:00–24:00 (inverno 6:00–22:00)',prezzo:'Gratuito',tempo:'1–3 ore',lat:40.4153,lng:-3.6844},
+    {id:'v2',name:'Madrid Río',emoji:'🏞️',cat:'Parco',
+      desc:'Parco fluviale lungo 10 km sulle rive del Manzanares. Piste ciclabili, fontane, aree giochi, spiagge cittadine e il bellissimo Puente de Arganzuela di Perrault. Fonte: esmadrid.com.',
+      orario:'Sempre aperto',prezzo:'Gratuito',tempo:'1–3 ore',lat:40.4020,lng:-3.7155},
+    {id:'v3',name:'Casa de Campo',emoji:'🌲',cat:'Parco',
+      desc:'Il parco più grande di Madrid (1.722 ettari), ex proprietà reale (fonte: esmadrid.com). Zoo, parco Warner, lago con barche. Una vera foresta a 10 minuti dal centro in Metro.',
+      orario:'Sempre aperto',prezzo:'Gratuito',tempo:'2–4 ore',lat:40.4061,lng:-3.7431},
+    {id:'v4',name:'Parque El Capricho',emoji:'🌸',cat:'Parco',
+      desc:'Uno dei giardini più belli e segreti di Madrid, ideato dalla Duchessa di Osuna nel XVIII sec. (fonte: esmadrid.com). In fiore a fine inverno è uno spettacolo. Nel quartiere Alameda de Osuna.',
+      orario:'Sab–Dom 9–21 (inverno 9–18)',prezzo:'Gratuito',tempo:'2 ore',lat:40.4700,lng:-3.6070},
+    {id:'v5',name:'Estadio Santiago Bernabéu',emoji:'⚽',cat:'Sport',
+      desc:'La cattedrale del calcio mondiale (fonte: esmadrid.com): stadio del Real Madrid ristrutturato con tetto retrattile e campo sollevabile. 15 Coppe dei Campioni. Tour tutto l\'anno.',
+      orario:'Lun–Sab 9:30–19, Dom 10–18:30',prezzo:'Tour €25',tempo:'1–2 ore',lat:40.4530,lng:-3.6883},
+    {id:'v6',name:'Estadio Metropolitano (Atlético)',emoji:'🔴',cat:'Sport',
+      desc:'Il magnifico stadio dell\'Atlético de Madrid (2017), con 68.000 posti. Tour disponibili venerdì, sabato, domenica e festivi. Fonte: esmadrid.com.',
+      orario:'Ven–Dom 10–19',prezzo:'Tour €20',tempo:'1.5 ore',lat:40.4362,lng:-3.5993},
+    {id:'v6b',name:'Plaza de Toros Las Ventas',emoji:'🐂',cat:'Sport',
+      desc:'La plaza de toros più grande e importante della Spagna (23.000 posti) e terza al mondo. Stile neomudéjar del 1929. Museo della corrida gratuito. Stagione: marzo–settembre.',
+      orario:'Museo: Mar–Dom 10–17',prezzo:'Museo gratuito; corride €5–150',tempo:'1 ora',lat:40.4318,lng:-3.6635},
+
+    // ── SHOPPING & MERCATI ──────────────────────────────────
+    {id:'sh1',name:'Gran Vía',emoji:'🛍️',cat:'Shopping',
+      desc:'Il boulevard più famoso di Madrid (fonte: esmadrid.com), costruito tra il 1910 e il 1929. Grattacieli storici, teatri, cinema, negozi, ristoranti e il Palazzo Metrópolis. Sempre animata.',
+      orario:'Sempre aperta',prezzo:'Gratuita',tempo:'1–2 ore',lat:40.4203,lng:-3.7057},
+    {id:'sh2',name:'El Rastro',emoji:'🛒',cat:'Mercato',
+      desc:'Il più grande e antico mercato delle pulci di Madrid (XVI sec., fonte: esmadrid.com). Ogni domenica mattina nel quartiere La Latina: antiquariato, arte, abbigliamento vintage e tutto ciò che immagini.',
+      orario:'Dom 9:00–15:00',prezzo:'Gratuito',tempo:'2 ore',lat:40.4097,lng:-3.7087},
+    {id:'sh3',name:'Mercado de San Miguel',emoji:'🍢',cat:'Gastronomia',
+      desc:'Il mercato gastronomico simbolo di Madrid, struttura in ferro del 1916. 33 banchi di tapas, vino, jamón ibérico, oyster, cocktail. Sempre pieno di vita.',
+      orario:'Lun–Dom 10–24',prezzo:'Gratuito (cibo a parte)',tempo:'1 ora',lat:40.4152,lng:-3.7088},
+    {id:'sh4',name:'Mercado de San Antón',emoji:'🧆',cat:'Gastronomia',
+      desc:'Mercato su tre piani nel cuore di Chueca. Piano terra prodotti freschi biologici, piano superiore ristoranti di tendenza e terrazza sul tetto. Vivace e autentico.',
+      orario:'Lun–Sab 10–22, Dom 11–16',prezzo:'Gratuito',tempo:'1 ora',lat:40.4232,lng:-3.6982},
+    {id:'sh5',name:'Paseo del Prado',emoji:'🌿',cat:'Shopping',
+      desc:'Il viale più elegante di Madrid, Patrimonio UNESCO 2021. Collega i tre grandi musei tra fontane (Cibeles, Nettuno), giardini e architetture neoclassiche. Passeggiata d\'obbligo.',
+      orario:'Sempre aperto',prezzo:'Gratuito',tempo:'1 ora',lat:40.4123,lng:-3.6920},
+
+    // ── RISTORANTI ──────────────────────────────────────────
+    {id:'r1',name:'Sobrino de Botín',emoji:'🍖',cat:'Ristorante',
+      desc:'Il ristorante più antico del mondo (1725, Guinness). Forno a legna originale. Cochinillo asado (maialino) e cordero al forno leggendari. Citato da Hemingway in "Il Sole Sorgerà Ancora". Prenotazione obbligatoria.',
+      orario:'Lun–Dom 13–16, 20–24',prezzo:'€35–50 a persona',tempo:'1.5–2 ore',lat:40.4140,lng:-3.7075},
+    {id:'r2',name:'Casa Lucio',emoji:'🍳',cat:'Ristorante',
+      desc:'Istituzione madrilena dal 1974 frequentata da re, presidenti e artisti. Famosissimi gli "huevos rotos" (uova rotte su patate fritte). Il piatto più fotografato di Madrid. Prenotare.',
+      orario:'Lun–Ven 13–16, 21–24; Sab–Dom 13–16:30',prezzo:'€30–45 pp',tempo:'1.5 ore',lat:40.4126,lng:-3.7094},
+    {id:'r3',name:'Chocolatería San Ginés',emoji:'☕',cat:'Ristorante',
+      desc:'Dal 1894, il posto più famoso al mondo per churros con cioccolata calda densa. Aperto 24 ore su 24, 365 giorni l\'anno. Fila sempre, ma vale ogni minuto di attesa.',
+      orario:'24 ore su 24',prezzo:'€5–8 pp',tempo:'30 min',lat:40.4154,lng:-3.7070},
+    {id:'r4',name:'La Barraca',emoji:'🥘',cat:'Ristorante',
+      desc:'La miglior paella valenciana autentica di Madrid, aperto dal 1935 con decorazioni tipiche. Ingredienti freschi, riso Bomba, brodo fatto in casa. Prenotare il weekend.',
+      orario:'Lun–Dom 13–16, 20:30–23:30',prezzo:'€25–35 pp',tempo:'1.5 ore',lat:40.4182,lng:-3.7002},
+    {id:'r5',name:'Taberna La Daniela',emoji:'🫕',cat:'Ristorante',
+      desc:'Il cocido madrileño autentico: ceci, carne di manzo, chorizo, morcilla e verdure bollite insieme. Il piatto simbolo di Madrid. Taberna tradizionale con azulejos originali.',
+      orario:'Lun–Dom 13–16:30, 20:30–24',prezzo:'€20–30 pp',tempo:'1.5 ore',lat:40.4180,lng:-3.6940},
+    {id:'r6',name:'Bar El Tigre',emoji:'🍺',cat:'Ristorante',
+      desc:'Bar iconico a Chueca: la birra (€2.50) viene servita con tapas gratis abbondantissime. Crocchette, patate, tortilla. Sempre affollatissimo. Esperienza madrilena autentica.',
+      orario:'Lun–Dom 10–24',prezzo:'€5–10 pp',tempo:'1 ora',lat:40.4235,lng:-3.6980},
+    {id:'r7',name:'La Musa de Espronceda',emoji:'🥑',cat:'Ristorante',
+      desc:'Brunch e tapas creative in atmosfera rilassata a Malasaña. Amatissimo dai locali per colazione e pranzo. Avocado toast, tortilla moderna, vini naturali. Ottimo rapporto q/p.',
+      orario:'Lun–Dom 9:30–1:00',prezzo:'€15–25 pp',tempo:'1 ora',lat:40.4290,lng:-3.7047},
+    {id:'r8',name:'Lhardy',emoji:'🥂',cat:'Ristorante',
+      desc:'Ristorante storico dal 1839 sulla Carrera de San Jerónimo. Cocido madrileño di lusso e caldo di manzo in tazze d\'argento. Atmosfera Belle Époque. Icona cittadina da quasi 200 anni.',
+      orario:'Lun–Sab 13–15:30, 21–23; Dom 13–15:30',prezzo:'€40–60 pp',tempo:'2 ore',lat:40.4163,lng:-3.7005},
+    {id:'r9',name:'Cervecería Alemana',emoji:'🍻',cat:'Ristorante',
+      desc:'Storico bar sulla Plaza de Santa Ana (1904), frequentato da Ernest Hemingway. Birra alla spina tedesca, calamari fritti e tapas classiche. L\'autentica birra fresca di Madrid.',
+      orario:'Dom–Gio 12–1, Ven–Sab 12–2',prezzo:'€15–25 pp',tempo:'1 ora',lat:40.4146,lng:-3.7006},
+    {id:'r10',name:'Tablaos Flamenco',emoji:'💃',cat:'Ristorante',
+      desc:'Madrid ha i migliori tablaos di flamenco della Spagna (fonte: esmadrid.com). Cena e spettacolo nei locali come Casa Patas, Corral de la Morería o Café de Chinitas. Prenotare sempre.',
+      orario:'Spettacoli 20–23:30',prezzo:'€35–80 pp (cena inclusa)',tempo:'2–3 ore',lat:40.4130,lng:-3.7090},
   ],
 
   toledo: [
 
-    // ── STAZIONI ───────────────────────────────────────────
-    { id:'ts1', name:'Stazione di Toledo', emoji:'🚉', category:'Stazione',
-      desc:'La stazione ferroviaria di Toledo in stile mudéjar (1919), un capolavoro architettonico di per sé. Treni AVE per Madrid Atocha in soli 33 minuti.',
-      orario:'Aperta 6:30–22:30', prezzo:'Gratuito (biglietti AVE ~€13–20)', tempo:'–',
-      lat:39.8623, lng:-4.0207 },
-    { id:'ts2', name:'Stazione Bus Toledo', emoji:'🚌', category:'Stazione',
-      desc:'Terminal degli autobus di Toledo. Collegamento con Madrid Méndez Álvaro ogni 30 min circa (1 h di viaggio, ~€6). Più economico del treno.',
-      orario:'5:30–22:30', prezzo:'~€6 Madrid–Toledo', tempo:'–',
-      lat:39.8657, lng:-4.0188 },
-    { id:'ts3', name:'Trenino turistico Toledo', emoji:'🚃', category:'Stazione',
-      desc:'Il caratteristico trenino che collega la stazione ferroviaria al centro storico e porta i visitatori ai punti panoramici principali.',
-      orario:'10–20 (stagionale)', prezzo:'€6 adulti', tempo:'45 min',
-      lat:39.8590, lng:-4.0224 },
+    // ── STAZIONI ────────────────────────────────────────────
+    {id:'ts1',name:'Stazione Ferroviaria di Toledo',emoji:'🚉',cat:'Stazione',
+      desc:'Capolavoro mudéjar del 1919 — la stazione stessa è un monumento storico (fonte: turismo.toledo.es). Treni AVE per Madrid Atocha in soli 33 minuti, con partenze ogni ora. Biglietti €13–20.',
+      orario:'6:30–22:30',prezzo:'Gratuito (biglietti a parte)',tempo:'–',lat:39.8623,lng:-4.0207},
+    {id:'ts2',name:'Terminal Bus di Toledo',emoji:'🚌',cat:'Stazione',
+      desc:'Autobus Alsa per Madrid Plaza Elíptica ogni 30 min (70 min di viaggio, €6). Più economico del treno. Terminal a 10 min a piedi dalla Puerta de Bisagra, ingresso storico alla città.',
+      orario:'5:30–22:30',prezzo:'~€6 per Madrid',tempo:'–',lat:39.8657,lng:-4.0188},
+    {id:'ts3',name:'Scale Mobili di Toledo',emoji:'🛗',cat:'Stazione',
+      desc:'Scale mobili gratuite che salgono dal parcheggio esterno al centro storico vicino alla Puerta del Sol. Evitano la salita ripida a piedi. Comodissime con bagagli o per chi ha difficoltà motorie.',
+      orario:'7:00–22:00',prezzo:'Gratuito',tempo:'–',lat:39.8603,lng:-4.0243},
+    {id:'ts4',name:'Trenino Turistico di Toledo',emoji:'🚃',cat:'Stazione',
+      desc:'Trenino panoramico che collega la stazione ferroviaria alla Plaza de Zocodover e porta ai punti panoramici principali. Comodo con bambini o per orientarsi alla prima visita.',
+      orario:'10–20 (stagionale)',prezzo:'€6 adulti, €3 bambini',tempo:'45 min',lat:39.8590,lng:-4.0224},
 
-    // ── CHIESE ─────────────────────────────────────────────
-    { id:'t1', name:'Catedral de Toledo', emoji:'⛪', category:'Chiesa',
-      desc:'Una delle cattedrali gotiche più imponenti di Spagna (1226–1493). Opere di El Greco, Goya e uno spettacolare Transparente barocco.',
-      orario:'Lun–Sab 10–18:30, Dom 14–18:30', prezzo:'€10', tempo:'1–2 ore',
-      lat:39.8572, lng:-4.0241 },
-    { id:'t2', name:'Iglesia de Santo Tomé', emoji:'🎭', category:'Chiesa',
-      desc:'Custodisce il capolavoro assoluto di El Greco: "L\'Interramento del Conte d\'Orgaz" (1588). Imprescindibile per chi ama la pittura.',
-      orario:'Lun–Dom 10–17:45 (estate 10–18:45)', prezzo:'€3', tempo:'30 min',
-      lat:39.8576, lng:-4.0271 },
-    { id:'t3', name:'Monasterio San Juan de los Reyes', emoji:'🕌', category:'Chiesa',
-      desc:'Convento francescano gotico-isabelino dei Re Cattolici. Chiostro doppio mozzafiato. Dalle mura esterne pendono catene di prigionieri cristiani liberati.',
-      orario:'Lun–Dom 10–18 (estate 10–19)', prezzo:'€3', tempo:'1 ora',
-      lat:39.8580, lng:-4.0313 },
-    { id:'t4', name:'Mezquita del Cristo de la Luz', emoji:'🕍', category:'Chiesa',
-      desc:'Piccola moschea araba del 999 d.C., poi chiesa cristiana. Uno degli esempi meglio conservati di arte hispano-araba del califfato.',
-      orario:'Lun–Ven 10–13:45, 15:30–17:45; Sab–Dom 10–13:45', prezzo:'€2.80', tempo:'30 min',
-      lat:39.8618, lng:-4.0233 },
+    // ── CHIESE ──────────────────────────────────────────────
+    {id:'t1',name:'Catedral Primada de Toledo',emoji:'⛪',cat:'Chiesa',
+      desc:'La cattedrale gotica più importante della Spagna (1226–1493, fonte: spain.info). Cinque navate, 88 colonne, vetrate del XIII sec. Opere di El Greco, Goya, Velázquez. Il Transparente barocco è un capolavoro. La domenica, messa mozarabica alle 9.',
+      orario:'Lun–Sab 10–18:30, Dom 14–18:30',prezzo:'€10',tempo:'1–2 ore',lat:39.8572,lng:-4.0241},
+    {id:'t2',name:'Iglesia de Santo Tomé',emoji:'🎭',cat:'Chiesa',
+      desc:'"L\'Interramento del Conte d\'Orgaz" di El Greco (1586–88): una sola sala, un solo capolavoro, uno dei più grandi dipinti della storia dell\'arte. Assolutamente imprescindibile. Fonte: turismo.toledo.es.',
+      orario:'Lun–Dom 10–17:45 (estate 10–18:45)',prezzo:'€3',tempo:'30 min',lat:39.8576,lng:-4.0271},
+    {id:'t3',name:'Monasterio San Juan de los Reyes',emoji:'🕌',cat:'Chiesa',
+      desc:'Monastero francescano dei Re Cattolici (1477). Chiostro doppio gotico-isabelino tra i più belli di Spagna. Dalle mura esterne pendono catene di prigionieri cristiani liberati dall\'Africa del Nord. Fonte: civitatis.com.',
+      orario:'Lun–Dom 10–18 (estate 10–19)',prezzo:'€3',tempo:'1 ora',lat:39.8580,lng:-4.0313},
+    {id:'t4',name:'Mezquita del Cristo de la Luz',emoji:'🕍',cat:'Chiesa',
+      desc:'Moschea araba del 999 d.C., una delle più antiche della Spagna (fonte: turismo.toledo.es). Trasformata poi in chiesa cristiana. Archi a ferro di cavallo perfettamente conservati dal califfato di Córdoba.',
+      orario:'Lun–Ven 10–13:45, 15:30–17:45; Sab–Dom 10–13:45',prezzo:'€2.80',tempo:'30 min',lat:39.8618,lng:-4.0233},
+    {id:'t5',name:'Iglesia de San Ildefonso (Gesuiti)',emoji:'⛪',cat:'Chiesa',
+      desc:'Chiesa barocca nel punto più alto di Toledo (1629–1765). Le torri offrono la migliore vista a 360° sui tetti medievali della città (fonte: spain.info). Scalabili con il biglietto.',
+      orario:'Lun–Dom 10–18:45 (estate 10–19:45)',prezzo:'€3.50',tempo:'45 min',lat:39.8580,lng:-4.0224},
+    {id:'t6',name:'Iglesia de San Román',emoji:'⛪',cat:'Chiesa',
+      desc:'Splendida chiesa mozarabica del XII sec. con campanile mudéjar. Oggi ospita il Museo Visigodo dei Concili. Dal quartiere alto si gode una delle viste più belle sul centro di Toledo.',
+      orario:'Mar–Sab 10–14, 16–18:30; Dom 10–14',prezzo:'€2',tempo:'30 min',lat:39.8607,lng:-4.0271},
 
-    // ── MUSEI ──────────────────────────────────────────────
-    { id:'t5', name:'Museo del Greco', emoji:'🖌️', category:'Museo',
-      desc:'Dedicato a El Greco, il pittore che visse a Toledo. "Il Cristo abbraccia la croce" e la serie apostolica completa.',
-      orario:'Mar–Sab 9:30–19:30, Dom 10–15', prezzo:'€3', tempo:'1 ora',
-      lat:39.8573, lng:-4.0277 },
-    { id:'t6', name:'Sinagoga del Tránsito', emoji:'✡️', category:'Museo',
-      desc:'Sinagoga medievale del XIV secolo, oggi Museo Sefardita. Stucchi mudéjar tra i più belli della Spagna.',
-      orario:'Mar–Sab 9:30–19:30, Dom 10–15', prezzo:'€3', tempo:'45 min',
-      lat:39.8568, lng:-4.0283 },
-    { id:'t7', name:'Museo de Santa Cruz', emoji:'🏺', category:'Museo',
-      desc:'Ospitato in un ex ospedale plateresco del XVI secolo. Collezione di arazzi, dipinti di El Greco e arte toledana.',
-      orario:'Lun–Sab 10–18, Dom 10–14', prezzo:'Gratuito', tempo:'1 ora',
-      lat:39.8588, lng:-4.0217 },
-    { id:'t8', name:'Museo del Ejército (Alcázar)', emoji:'⚔️', category:'Museo',
-      desc:'Dentro l\'Alcázar, il Museo dell\'Esercito racconta la storia militare spagnola dal Medioevo a oggi. La storia dell\'assedio del 1936 è avvincente.',
-      orario:'Mar–Dom 11–17', prezzo:'€5', tempo:'1–2 ore',
-      lat:39.8580, lng:-4.0207 },
+    // ── MUSEI ───────────────────────────────────────────────
+    {id:'tm1',name:'Museo del Greco',emoji:'🖌️',cat:'Museo',
+      desc:'Casa-museo di El Greco nel cuore del barrio judío (fonte: turismo.toledo.es). "Il Cristo abbraccia la croce", la serie apostolica completa. L\'artista cretese che amò Toledo più di qualsiasi altra città.',
+      orario:'Mar–Sab 9:30–19:30, Dom 10–15',prezzo:'€3',tempo:'1 ora',lat:39.8573,lng:-4.0277},
+    {id:'tm2',name:'Sinagoga del Tránsito — Museo Sefardita',emoji:'✡️',cat:'Museo',
+      desc:'Sinagoga medievale del XIV sec. commissionata da Shmuel ha-Levi, tesoriere di Pietro I di Castiglia. Stucchi mudéjar tra i più belli di Spagna. Museo Sefardita con storia degli ebrei di Toledo.',
+      orario:'Mar–Sab 9:30–19:30, Dom 10–15',prezzo:'€3',tempo:'45 min',lat:39.8568,lng:-4.0283},
+    {id:'tm3',name:'Museo de Santa Cruz',emoji:'🏺',cat:'Museo',
+      desc:'Ex ospedale plateresco del XVI sec. (arch. Covarrubias). Collezione di arazzi reali, dipinti di El Greco, art precolombiana. Il cortile è uno dei più belli di Toledo. Gratuito e poco affollato.',
+      orario:'Lun–Sab 10–18, Dom 10–14',prezzo:'Gratuito',tempo:'1 ora',lat:39.8588,lng:-4.0217},
+    {id:'tm4',name:'Museo del Ejército (Alcázar)',emoji:'⚔️',cat:'Museo',
+      desc:'Il Museo dell\'Esercito all\'interno dell\'Alcázar racconta la storia militare spagnola dal Medioevo a oggi (fonte: leyendasdetoledo.com). L\'assedio del 1936 nella guerra civile è narrato in modo avvincente.',
+      orario:'Mar–Dom 11–17',prezzo:'€5',tempo:'1–2 ore',lat:39.8580,lng:-4.0207},
+    {id:'tm5',name:'Museo de la Catedral',emoji:'💎',cat:'Museo',
+      desc:'All\'interno della Cattedrale, una sacrestia tra le più ricche d\'Europa. La Custodia Processionale in oro puro di Juan de Arfe (1587), capolavori di Goya e Rubens. Incluso nel biglietto della Cattedrale.',
+      orario:'Come Cattedrale',prezzo:'Incluso in €10',tempo:'45 min',lat:39.8572,lng:-4.0241},
+    {id:'tm6',name:'Museo Victorio Macho',emoji:'🗿',cat:'Museo',
+      desc:'Museo-giardino dello scultore toledano Victorio Macho sulla scarpata del Tago. Vista panoramica mozzafiato sul fiume. Sculture monumentali in un contesto naturale unico.',
+      orario:'Lun–Sab 10–19, Dom 10–15',prezzo:'€3',tempo:'1 ora',lat:39.8569,lng:-4.0245},
+    {id:'tm7',name:'Museo de Arte Contemporáneo',emoji:'🎨',cat:'Museo',
+      desc:'Arte contemporanea toledana e nazionale nel convento di Santa Fe. Mostre temporanee di artisti spagnoli e internazionali. Ingresso gratuito e poco conosciuto.',
+      orario:'Mar–Sab 10–14, 16:30–20; Dom 10–14',prezzo:'Gratuito',tempo:'45 min',lat:39.8595,lng:-4.0230},
 
-    // ── MONUMENTI ──────────────────────────────────────────
-    { id:'t9', name:'Alcázar di Toledo', emoji:'🏰', category:'Monumento',
-      desc:'La fortezza-palazzo che domina Toledo dall\'alto. Simbolo della città, ricostruita più volte nei secoli.',
-      orario:'Mar–Dom 11–17', prezzo:'€5 (incluso museo)', tempo:'1–2 ore',
-      lat:39.8580, lng:-4.0207 },
-    { id:'t10', name:'Sinagoga Santa María la Blanca', emoji:'🕍', category:'Monumento',
-      desc:'La più antica sinagoga d\'Europa ancora in piedi (XII sec.). Magnifiche arcate a ferro di cavallo di stile almohade.',
-      orario:'Lun–Dom 10–18 (estate 10–19)', prezzo:'€3', tempo:'30 min',
-      lat:39.8571, lng:-4.0296 },
-    { id:'t11', name:'Puerta de Bisagra', emoji:'🚪', category:'Monumento',
-      desc:'La porta monumentale d\'accesso alla città vecchia del XVI secolo. Stemma imperiale di Carlo V. Simbolo architettonico di Toledo.',
-      orario:'Sempre aperta', prezzo:'Gratuita', tempo:'15 min',
-      lat:39.8639, lng:-4.0229 },
-    { id:'t12', name:'Puente de San Martín', emoji:'🌉', category:'Monumento',
-      desc:'Antico ponte medievale del XIV secolo sul fiume Tago, con torri gotiche. Vista spettacolare sulla città e sul canyon.',
-      orario:'Sempre aperto', prezzo:'Gratuito', tempo:'20 min',
-      lat:39.8562, lng:-4.0313 },
-    { id:'t13', name:'Puente de Alcántara', emoji:'🌁', category:'Monumento',
-      desc:'Ponte romano-medievale sul Tago con torre di guardia gotica. Vista splendida sull\'Alcázar e sulle mura di Toledo.',
-      orario:'Sempre aperto', prezzo:'Gratuito', tempo:'20 min',
-      lat:39.8586, lng:-4.0186 },
-    { id:'t14', name:'Murallas de Toledo', emoji:'🧱', category:'Monumento',
-      desc:'Le antiche mura romane e medievali che circondano il centro storico. Passeggiata panoramica lungo il perimetro della città vecchia.',
-      orario:'Sempre aperte', prezzo:'Gratuito', tempo:'1–2 ore',
-      lat:39.8600, lng:-4.0210 },
+    // ── MONUMENTI ───────────────────────────────────────────
+    {id:'ta1',name:'Alcázar di Toledo',emoji:'🏰',cat:'Monumento',
+      desc:'La fortezza simbolo di Toledo, costruita in epoca romana e ricostruita da Carlo I nel 1525 (fonte: civitatis.com). Distrutta nella guerra civile, ricostruita fedelmente. Dal punto più alto della città, domina tutto.',
+      orario:'Mar–Dom 11–17',prezzo:'€5 (museo incluso)',tempo:'1–2 ore',lat:39.8580,lng:-4.0207},
+    {id:'ta2',name:'Sinagoga Santa María la Blanca',emoji:'🕍',cat:'Monumento',
+      desc:'La più antica sinagoga d\'Europa ancora in piedi (XII sec., fonte: viajeroscallejeros.com). Stile almohade: cinque navate di archi a ferro di cavallo in stucco bianco. Un capolavoro della convivenza delle tre culture.',
+      orario:'Lun–Dom 10–18 (estate 10–19)',prezzo:'€3',tempo:'30 min',lat:39.8571,lng:-4.0296},
+    {id:'ta3',name:'Puerta de Bisagra',emoji:'🚪',cat:'Monumento',
+      desc:'La porta monumentale d\'accesso alla città vecchia (XVI sec.), restaurata da Carlos V e Felipe II. Stemma imperiale con aquila bicipite (fonte: civitatis.com). Punto di partenza classico della visita a Toledo.',
+      orario:'Sempre aperta',prezzo:'Gratuita',tempo:'15 min',lat:39.8639,lng:-4.0229},
+    {id:'ta4',name:'Puente de San Martín',emoji:'🌉',cat:'Monumento',
+      desc:'Ponte medievale gotico del XIV sec. sul Tago con cinque archi e due torri di guardia. Vista magnifica sul canyon del fiume. Il ponte medievale più bello di Toledo (fonte: viviendodeviaje.com).',
+      orario:'Sempre aperto',prezzo:'Gratuito',tempo:'20 min',lat:39.8562,lng:-4.0313},
+    {id:'ta5',name:'Puente de Alcántara',emoji:'🌁',cat:'Monumento',
+      desc:'Ponte romano-medievale sul Tago con torre di guardia gotica del XIII sec. Il ponte più antico di Toledo, usato da romani, visigoti e arabi. Vista spettacolare sull\'Alcázar.',
+      orario:'Sempre aperto',prezzo:'Gratuito',tempo:'20 min',lat:39.8586,lng:-4.0186},
+    {id:'ta6',name:'Murallas Medievali',emoji:'🧱',cat:'Monumento',
+      desc:'Le mura romane e medievali che circondano il centro storico per oltre 2 km. Passeggiata esterna con viste straordinarie sulla città e sul canyon del Tago. Ingresso libero.',
+      orario:'Sempre aperte',prezzo:'Gratuito',tempo:'1–2 ore',lat:39.8600,lng:-4.0210},
+    {id:'ta7',name:'Puerta del Sol (Toledo)',emoji:'🌞',cat:'Monumento',
+      desc:'Porta medievale mudéjar del XIV sec. con un orologio unico: due cavalieri battono le ore sul quadrante (fonte: leyendasdetoledo.com). Accesso alle scale mobili gratuite per il centro storico.',
+      orario:'Sempre aperta',prezzo:'Gratuita',tempo:'10 min',lat:39.8603,lng:-4.0243},
+    {id:'ta8',name:'Plaza del Ayuntamiento',emoji:'🏛️',cat:'Monumento',
+      desc:'La bella piazza porticata del Municipio di Toledo (XVI sec.). Di fronte alla Cattedrale, con il Palazzo Arcivescovile rinascimentale e il Comune. Il cuore civile e religioso di Toledo.',
+      orario:'Sempre aperta',prezzo:'Gratuita',tempo:'15 min',lat:39.8567,lng:-4.0236},
+    {id:'ta9',name:'Arco de la Sangre',emoji:'🏛️',cat:'Monumento',
+      desc:'Porta araba del X secolo nell\'attuale Plaza de Zocodover. Una delle più antiche di Toledo (fonte: civitatis.com). Custodisce una cappella del Cristo de la Sangre, aperta in Settimana Santa.',
+      orario:'Sempre aperto',prezzo:'Gratuito',tempo:'10 min',lat:39.8593,lng:-4.0224},
 
-    // ── PANORAMI ───────────────────────────────────────────
-    { id:'t15', name:'Mirador del Valle', emoji:'🌅', category:'Panorama',
-      desc:'Il punto panoramico più celebre di Toledo: la vista che El Greco dipinse nel suo quadro "Vista di Toledo". Magnifica all\'alba e al tramonto.',
-      orario:'Sempre aperto', prezzo:'Gratuito', tempo:'30 min',
-      lat:39.8497, lng:-4.0268 },
-    { id:'t16', name:'Mirador de la Granja', emoji:'🌄', category:'Panorama',
-      desc:'Terrazza panoramica sulle mura medievali. Vista sul canyon del Tago e sul paesaggio della Castilla-La Mancha.',
-      orario:'Sempre aperto', prezzo:'Gratuito', tempo:'20 min',
-      lat:39.8591, lng:-4.0333 },
+    // ── PANORAMI ────────────────────────────────────────────
+    {id:'tp1',name:'Mirador del Valle',emoji:'🌅',cat:'Panorama',
+      desc:'Il panorama più celebre di Toledo: la stessa vista che El Greco dipinse in "Vista di Toledo" (fonte: turismo.toledo.es). In gennaio 2022 Toledo ha vinto il premio "Panoramica Notturna più bella del Mondo". Al tramonto è magia.',
+      orario:'Sempre aperto',prezzo:'Gratuito',tempo:'30 min',lat:39.8497,lng:-4.0268},
+    {id:'tp2',name:'Mirador de la Granja',emoji:'🌄',cat:'Panorama',
+      desc:'Terrazza sulle mura medievali con vista sul canyon del Tago e sul paesaggio della Castilla-La Mancha. Meno affollato del Mirador del Valle, ma ugualmente spettacolare.',
+      orario:'Sempre aperto',prezzo:'Gratuito',tempo:'20 min',lat:39.8591,lng:-4.0333},
+    {id:'tp3',name:'Vista dalle Torri di San Ildefonso',emoji:'🔭',cat:'Panorama',
+      desc:'Le torri della chiesa barocca dei Gesuiti offrono la migliore vista a 360° sui tetti medievali di Toledo (fonte: spain.info). La cupola e il labirinto di strade dall\'alto: uno spettacolo.',
+      orario:'Lun–Dom 10–19',prezzo:'Incluso in €3.50',tempo:'30 min',lat:39.8580,lng:-4.0224},
 
-    // ── SHOPPING ───────────────────────────────────────────
-    { id:'t17', name:'Plaza Zocodover', emoji:'🛍️', category:'Shopping',
-      desc:'La piazza principale di Toledo. Negozi di damasquinado (oro su acciaio), coltelli toledani, marzapane e ceramiche.',
-      orario:'Sempre aperta', prezzo:'Gratuita', tempo:'1–2 ore',
-      lat:39.8593, lng:-4.0224 },
+    // ── QUARTIERI STORICI ────────────────────────────────────
+    {id:'tq1',name:'Barrio Judío (Judería)',emoji:'✡️',cat:'Quartiere',
+      desc:'L\'antico quartiere ebraico di Toledo, uno dei meglio conservati d\'Europa (fonte: viviendodeviaje.com). Strade labirintiche con azulejos di simboli ebraici, botteghe artigiane e l\'atmosfera medioevale intatta.',
+      orario:'Sempre aperto',prezzo:'Gratuito',tempo:'1–2 ore',lat:39.8569,lng:-4.0285},
+    {id:'tq2',name:'Paseo del Tránsito',emoji:'🌊',cat:'Quartiere',
+      desc:'Passeggiata panoramica lungo le mura della città con viste splendide sul fiume Tago e i Cigarrales (fonte: toledoguiaturisticaycultural.com). Si passa davanti alla Sinagoga del Tránsito e al Museo del Greco.',
+      orario:'Sempre aperto',prezzo:'Gratuito',tempo:'45 min',lat:39.8568,lng:-4.0280},
+    {id:'tq3',name:'Calle Alfileritos',emoji:'🍽️',cat:'Quartiere',
+      desc:'La strada dei ristoranti per eccellenza di Toledo (fonte: spain.info). Stretta e medioevale, piena di terrazze e locali dove assaggiare la cucina toledana: carcamusas, perdiz e mazapán.',
+      orario:'Sempre aperta',prezzo:'Gratuita',tempo:'1 ora',lat:39.8592,lng:-4.0247},
 
-    // ── RISTORANTI ─────────────────────────────────────────
-    { id:'tr1', name:'Restaurante Adolfo', emoji:'🍽️', category:'Ristorante',
-      desc:'Il ristorante più rinomato di Toledo. Cucina castigliana d\'autore in un palazzo medievale. Perdiz estofada e caza di selvaggina.',
-      orario:'Lun–Sab 13:30–15:30, 21–23; Dom 13:30–15:30', prezzo:'€50–70 pp', tempo:'2 ore',
-      lat:39.8571, lng:-4.0243 },
-    { id:'tr2', name:'La Orza', emoji:'🫙', category:'Ristorante',
-      desc:'Cucina toledana tradizionale con tocco creativo. Famoso per carciofo con foie gras e perdiz a escabeche.',
-      orario:'Lun–Dom 13:30–16, 20:30–23', prezzo:'€35–50 pp', tempo:'1.5 ore',
-      lat:39.8574, lng:-4.0269 },
-    { id:'tr3', name:'Bar Ludeña', emoji:'🥄', category:'Ristorante',
-      desc:'Il bar-ristorante più autentico di Toledo, vicino alla Cattedrale. Carciofi fritti, cojondongo (gazpacho toledano). Economico e genuino.',
-      orario:'Lun–Sab 9–23, Dom 9–17', prezzo:'€12–20 pp', tempo:'1 ora',
-      lat:39.8579, lng:-4.0238 },
-    { id:'tr4', name:'Santo Tomé Marzipan', emoji:'🍬', category:'Ristorante',
-      desc:'La pasticceria storica di Toledo. Marzapane artigianale in forme di San Biagio, animali e frutti. Perfetto souvenir dolce.',
-      orario:'Lun–Dom 9–21', prezzo:'€5–15', tempo:'20 min',
-      lat:39.8593, lng:-4.0222 },
-    { id:'tr5', name:'Cervecería La Abadía', emoji:'🍺', category:'Ristorante',
-      desc:'Bar-ristorante in un suggestivo convento del XVI secolo. Ampia selezione di birre artigianali e tapas toledane autentiche.',
-      orario:'Lun–Dom 11–24', prezzo:'€15–25 pp', tempo:'1 ora',
-      lat:39.8590, lng:-4.0259 },
-    { id:'tr6', name:'Restaurante El Trebol', emoji:'🥩', category:'Ristorante',
-      desc:'Ottima cucina castigliana a prezzi ragionevoli. Cordero asado (agnello al forno) e sopa de ajo (zuppa d\'aglio). Molto frequentato dai locali.',
-      orario:'Lun–Dom 12–16, 20–23', prezzo:'€18–28 pp', tempo:'1 ora',
-      lat:39.8585, lng:-4.0240 },
+    // ── SHOPPING ────────────────────────────────────────────
+    {id:'tsh1',name:'Plaza de Zocodover',emoji:'🛍️',cat:'Shopping',
+      desc:'La piazza principale di Toledo, punto di partenza di tutti gli itinerari (fonte: civitatis.com). Negozi di damasquinado (oro intarsiato su acciaio), coltelli toledani, marzapane e ceramiche. Terrazze ideali per la sosta.',
+      orario:'Sempre aperta',prezzo:'Gratuita',tempo:'1–2 ore',lat:39.8593,lng:-4.0224},
+    {id:'tsh2',name:'Spade e Damasquinado Toledano',emoji:'⚔️',cat:'Shopping',
+      desc:'Toledo è famosa nel mondo per le spade e i coltelli in acciaio (fonte: toledoguiaturisticaycultural.com) e per il damasquinado: oro e argento intarsiati su acciaio blu. Calle del Comercio è la via principale.',
+      orario:'Lun–Dom 10–20',prezzo:'Gratuito',tempo:'1 ora',lat:39.8590,lng:-4.0230},
+
+    // ── RISTORANTI ──────────────────────────────────────────
+    {id:'tr1',name:'Restaurante Adolfo',emoji:'🍽️',cat:'Ristorante',
+      desc:'Il ristorante più rinomato di Toledo, in un palazzo medievale del XII sec. (fonte: toledoguiaturisticaycultural.com). Cucina castigliana d\'autore: perdiz en escabeche, venado (cervo) e specialità manchege.',
+      orario:'Lun–Sab 13:30–15:30, 21–23; Dom 13:30–15:30',prezzo:'€50–70 pp',tempo:'2 ore',lat:39.8571,lng:-4.0243},
+    {id:'tr2',name:'La Orza',emoji:'🫙',cat:'Ristorante',
+      desc:'Cucina toledana contemporanea con ingredienti locali. Carciofo con foie gras, perdiz a escabeche e venado in salsa. Cantina di vini manchegos eccellente. Atmosfera intima.',
+      orario:'Lun–Dom 13:30–16, 20:30–23',prezzo:'€35–50 pp',tempo:'1.5 ore',lat:39.8574,lng:-4.0269},
+    {id:'tr3',name:'Bar Ludeña',emoji:'🥄',cat:'Ristorante',
+      desc:'Il bar-ristorante più autentico di Toledo, a 50 m dalla Cattedrale (fonte: viajeroscallejeros.com). Carciofi fritti, cojondongo (gazpacho toledano con morcilla) e tapas di stagione. Economico e genuino.',
+      orario:'Lun–Sab 9–23, Dom 9–17',prezzo:'€12–20 pp',tempo:'1 ora',lat:39.8579,lng:-4.0238},
+    {id:'tr4',name:'Pastelería Santo Tomé',emoji:'🍬',cat:'Ristorante',
+      desc:'La pasticceria storica di Toledo per il miglior marzapane artigianale (fonte: toledoguiaturisticaycultural.com). Figure di San Biagio, animali, frutta e cofanetti regalo. Souvenir dolce perfetto.',
+      orario:'Lun–Dom 9–21',prezzo:'€5–15',tempo:'20 min',lat:39.8593,lng:-4.0222},
+    {id:'tr5',name:'Cervecería La Abadía',emoji:'🍺',cat:'Ristorante',
+      desc:'Bar-ristorante in un convento del XVI sec. con soffitti a volta originali. Ampia selezione di birre artigianali spagnole e tapas toledane. Musica dal vivo il venerdì sera.',
+      orario:'Lun–Dom 11–24',prezzo:'€15–25 pp',tempo:'1 ora',lat:39.8590,lng:-4.0259},
+    {id:'tr6',name:'Restaurante El Trebol',emoji:'🥩',cat:'Ristorante',
+      desc:'Uno dei migliori ristoranti dove mangiare a Toledo secondo i locali (fonte: viajeroscallejeros.com). Cordero asado, perdiz a la toledana, mollejas e rabo de toro. Prezzi onesti.',
+      orario:'Lun–Dom 12–16, 20–23',prezzo:'€18–28 pp',tempo:'1 ora',lat:39.8585,lng:-4.0240},
+    {id:'tr7',name:'El Albero',emoji:'🍷',cat:'Ristorante',
+      desc:'Uno dei migliori ristoranti di Toledo vicino alla Puerta de Bisagra (fonte: viajeroscallejeros.com). Cucina moderna con prodotti locali, ottima selezione di vini della Mancha e atmosfera raffinata.',
+      orario:'Mar–Dom 13:30–15:30, 21–23',prezzo:'€30–45 pp',tempo:'1.5 ore',lat:39.8637,lng:-4.0234},
+    {id:'tr8',name:'Parador de Toledo (terrazza)',emoji:'🌇',cat:'Ristorante',
+      desc:'La terrazza del Parador Nacional sul Mirador del Valle. Cucina castigliana di qualità con la vista più bella di Toledo sul Tago. Ideale per un pranzo o aperitivo speciale.',
+      orario:'Lun–Dom 13:30–15:30, 20:30–22',prezzo:'€30–45 pp',tempo:'1.5 ore',lat:39.8490,lng:-4.0272},
+    {id:'tr9',name:'Carcamusas e Cucina Toledana',emoji:'🍲',cat:'Ristorante',
+      desc:'Le carcamusas (carne di maiale con verdure e salsa di pomodoro) sono il piatto tipico di Toledo (fonte: toledoguiaturisticaycultural.com). Si trovano in quasi tutti i ristoranti del centro storico.',
+      orario:'Vari locali',prezzo:'€8–15',tempo:'1 ora',lat:39.8590,lng:-4.0240},
   ]
 };
 
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 //  STATO
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 let activeCity = 'madrid';
-let activeFilters = { madrid:'Tutti', toledo:'Tutti' };
-let userPosition = null;
-let mapInstance = null;
-let mapCurrentCity = null;
+let activeCat = {madrid:'Tutti', toledo:'Tutti'};
+let userPos = null;
+let map = null;
+let mapCity = null;
 let userMarker = null;
-let attractionMarkers = [];
+let atkMarkers = [];
 
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 //  INIT
-// ============================================================
+// ═══════════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
   ['madrid','toledo'].forEach(c => { buildFilters(c); renderGrid(c); });
-  // Pre-crea la mappa (invisibile) così Leaflet esiste già per Toledo
-  initLeaflet('madrid');
 });
 
-// ============================================================
-//  SWITCH CITY
-// ============================================================
 function switchCity(city) {
   activeCity = city;
   document.querySelectorAll('.city-section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.city-tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected','false'); });
   document.getElementById('section-'+city).classList.add('active');
   const tab = document.getElementById('tab-'+city);
-  tab.classList.add('active');
-  tab.setAttribute('aria-selected','true');
+  tab.classList.add('active'); tab.setAttribute('aria-selected','true');
 }
 
-// ============================================================
-//  FILTRI
-// ============================================================
 function buildFilters(city) {
-  const categories = ['Tutti', ...new Set(ATTRACTIONS[city].map(a => a.category))];
-  const container = document.getElementById('filters-'+city);
-  container.innerHTML = '';
-  categories.forEach(cat => {
-    const btn = document.createElement('button');
-    btn.className = 'filter-btn' + (cat==='Tutti' ? ' active' : '');
-    btn.textContent = cat;
-    btn.addEventListener('click', () => {
-      activeFilters[city] = cat;
-      container.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+  const cats = ['Tutti', ...new Set(DATA[city].map(a => a.cat))];
+  const el = document.getElementById('filters-'+city);
+  el.innerHTML = '';
+  cats.forEach(c => {
+    const b = document.createElement('button');
+    b.className = 'filter-btn' + (c==='Tutti' ? ' active' : '');
+    b.textContent = c;
+    b.onclick = () => {
+      activeCat[city] = c;
+      el.querySelectorAll('.filter-btn').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
       renderGrid(city);
-    });
-    container.appendChild(btn);
+    };
+    el.appendChild(b);
   });
 }
 
@@ -535,168 +606,145 @@ function clearSearch(city) {
 }
 
 function renderGrid(city) {
-  const query = (document.getElementById('search-'+city)?.value||'').toLowerCase().trim();
-  const catFilter = activeFilters[city]||'Tutti';
-  let items = ATTRACTIONS[city];
-  if (catFilter !== 'Tutti') items = items.filter(a => a.category===catFilter);
-  if (query) items = items.filter(a =>
-    a.name.toLowerCase().includes(query) ||
-    a.desc.toLowerCase().includes(query) ||
-    a.category.toLowerCase().includes(query)
+  const q = (document.getElementById('search-'+city)?.value||'').toLowerCase().trim();
+  const cat = activeCat[city]||'Tutti';
+  let items = DATA[city];
+  if (cat !== 'Tutti') items = items.filter(a => a.cat===cat);
+  if (q) items = items.filter(a =>
+    a.name.toLowerCase().includes(q) ||
+    a.desc.toLowerCase().includes(q) ||
+    a.cat.toLowerCase().includes(q)
   );
-  if (userPosition) {
-    items = items.map(a => ({ ...a, dist: haversine(userPosition.lat, userPosition.lng, a.lat, a.lng) }));
+  if (userPos) {
+    items = items.map(a => ({...a, dist: hvs(userPos.lat, userPos.lng, a.lat, a.lng)}));
     items.sort((a,b) => a.dist - b.dist);
   }
   const grid = document.getElementById('grid-'+city);
   grid.innerHTML = '';
   if (!items.length) {
-    grid.innerHTML = '<div class="no-results"><span class="no-results-icon">🔍</span><p>Nessun risultato trovato.</p></div>';
+    grid.innerHTML = '<div class="nores"><span class="nores-icon">🔍</span><p>Nessun risultato trovato.</p></div>';
   } else {
-    items.forEach(a => grid.appendChild(buildCard(a)));
+    items.forEach(a => grid.appendChild(mkCard(a)));
   }
   const badge = document.getElementById('count-'+city);
   if (badge) badge.textContent = items.length;
 }
 
-// ============================================================
-//  BUILD CARD
-// ============================================================
-function buildCard(a) {
-  const card = document.createElement('article');
-  card.className = 'attraction-card';
+function mkCard(a) {
+  const el = document.createElement('article');
+  el.className = 'card';
   const navUrl = `https://www.google.com/maps/dir/?api=1&destination=${a.lat},${a.lng}&travelmode=walking`;
-  const infoUrl = `https://www.google.com/search?q=${encodeURIComponent(a.name+' Toledo')}`;
-  const distBadge = (a.dist !== undefined)
-    ? `<div class="meta-badge"><span>🚶</span> ${formatDist(a.dist)} · ≈${walkMin(a.dist)} min</div>` : '';
-  card.innerHTML = `
-    <div class="card-header">
-      <span class="card-emoji" aria-hidden="true">${a.emoji}</span>
-      <div class="card-info">
-        <h3 class="card-name">${esc(a.name)}</h3>
-        <span class="card-category">${esc(a.category)}</span>
-        <p class="card-desc">${esc(a.desc)}</p>
+  const infoUrl = `https://www.google.com/search?q=${encodeURIComponent(a.name+' '+a.cat+' Spagna')}`;
+  const db = a.dist !== undefined
+    ? `<div class="badge"><span>🚶</span> ${fdist(a.dist)} · ≈${fmin(a.dist)} min</div>` : '';
+  el.innerHTML = `
+    <div class="card-head">
+      <span class="cemoji" aria-hidden="true">${a.emoji}</span>
+      <div class="cinfo">
+        <h3 class="cname">${esc(a.name)}</h3>
+        <span class="ccat">${esc(a.cat)}</span>
+        <p class="cdesc">${esc(a.desc)}</p>
       </div>
     </div>
     <div class="card-meta">
-      <div class="meta-badge"><span>🕐</span> ${esc(a.orario)}</div>
-      <div class="meta-badge"><span>💶</span> ${esc(a.prezzo)}</div>
-      ${a.tempo && a.tempo!=='–' ? `<div class="meta-badge"><span>⏱</span> ${esc(a.tempo)}</div>` : ''}
-      ${distBadge}
+      <div class="badge"><span>🕐</span> ${esc(a.orario)}</div>
+      <div class="badge"><span>💶</span> ${esc(a.prezzo)}</div>
+      ${a.tempo && a.tempo!=='–' ? `<div class="badge"><span>⏱</span> ${esc(a.tempo)}</div>` : ''}
+      ${db}
     </div>
-    <div class="card-actions">
-      <button class="btn-map-pin" onclick="openMapOnPlace('${a.id}')">📍 Vedi su Mappa</button>
+    <div class="card-act">
+      <button class="btn-map" onclick="openMapOnPlace('${a.id}')">📍 Vedi su Mappa</button>
       <a class="btn-info" href="${infoUrl}" target="_blank" rel="noopener noreferrer">ℹ️ Info</a>
       <a class="btn-nav" href="${navUrl}" target="_blank" rel="noopener noreferrer">🧭 Portami Lì — Navigazione a Piedi</a>
     </div>`;
-  return card;
+  return el;
 }
 
-// ============================================================
-//  MAPPA — il trucco: usa visibility/pointer-events, NON display:none
-//          così Leaflet non perde le dimensioni del container
-// ============================================================
-function initLeaflet(city) {
-  if (mapInstance) return; // già inizializzata
-  const center = city==='madrid' ? [40.4168,-3.7038] : [39.8581,-4.0244];
-  mapInstance = L.map('map-container', { zoomControl:true }).setView(center, 15);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution:'© OpenStreetMap contributors', maxZoom:19
-  }).addTo(mapInstance);
-  mapCurrentCity = city;
-}
-
+// ═══════════════════════════════════════════════════════════
+//  MAPPA — usa visibility trick: Leaflet mantiene il container
+// ═══════════════════════════════════════════════════════════
 function openMap(city) {
-  document.getElementById('map-modal-title').textContent = city==='madrid' ? '🏙 Mappa Madrid' : '⚔️ Mappa Toledo';
+  document.getElementById('map-title').textContent = city==='madrid' ? '🏙️ Mappa Madrid' : '⚔️ Mappa Toledo';
   document.getElementById('map-modal').classList.add('open');
   document.body.style.overflow = 'hidden';
-  setMapStatus('📡 Rilevamento posizione GPS…');
+  setMapStatus('📡 Caricamento mappa…');
 
-  // Serve un piccolo ritardo per far sì che il container sia visibile prima di tutto
   setTimeout(() => {
-    // Se cambia città, reinizializza
-    if (!mapInstance || mapCurrentCity !== city) {
-      if (mapInstance) { mapInstance.remove(); mapInstance = null; attractionMarkers = []; }
+    if (!map || mapCity !== city) {
+      if (map) { map.remove(); map=null; atkMarkers=[]; userMarker=null; }
       const center = city==='madrid' ? [40.4168,-3.7038] : [39.8581,-4.0244];
-      mapInstance = L.map('map-container', { zoomControl:true }).setView(center, 15);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution:'© OpenStreetMap contributors', maxZoom:19
-      }).addTo(mapInstance);
-      mapCurrentCity = city;
+      const zoom   = city==='madrid' ? 14 : 15;
+      map = L.map('map-container',{zoomControl:true}).setView(center, zoom);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+        attribution:'© <a href="https://openstreetmap.org">OpenStreetMap</a>',maxZoom:19
+      }).addTo(map);
+      mapCity = city;
     }
+    // Fondamentale dopo visibilità
+    map.invalidateSize();
 
-    // Fondamentale: invalidare la size dopo che il modal è visibile
-    mapInstance.invalidateSize();
-
-    // Piazza marker attrazioni
-    attractionMarkers.forEach(m => mapInstance.removeLayer(m));
-    attractionMarkers = [];
-    ATTRACTIONS[city].forEach(a => {
-      const icon = L.divIcon({
-        html:`<div style="font-size:1.9rem;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.45))">${a.emoji}</div>`,
-        className:'', iconSize:[32,32], iconAnchor:[16,16]
+    // Marker attrazioni
+    atkMarkers.forEach(m => map.removeLayer(m));
+    atkMarkers = [];
+    DATA[city].forEach(a => {
+      const ico = L.divIcon({
+        html:`<div style="font-size:1.8rem;line-height:1;filter:drop-shadow(0 2px 5px rgba(0,0,0,.5))">${a.emoji}</div>`,
+        className:'',iconSize:[30,30],iconAnchor:[15,15]
       });
-      const m = L.marker([a.lat, a.lng], { icon });
-      m._attractionId = a.id;
-      m.bindPopup(() => buildPopupContent(a), { maxWidth:290, minWidth:220 });
-      m.addTo(mapInstance);
-      attractionMarkers.push(m);
+      const m = L.marker([a.lat,a.lng],{icon:ico});
+      m._aid = a.id;
+      m.bindPopup(()=>mkPopup(a),{maxWidth:300,minWidth:220});
+      m.addTo(map);
+      atkMarkers.push(m);
     });
 
     // Geolocalizzazione
+    setMapStatus('📡 Rilevamento posizione GPS…');
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         pos => {
-          userPosition = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-          if (userMarker) { userMarker.remove(); userMarker = null; }
-          const pulseIcon = L.divIcon({
+          userPos = {lat:pos.coords.latitude, lng:pos.coords.longitude};
+          if (userMarker) { userMarker.remove(); userMarker=null; }
+          const ico = L.divIcon({
             html:`<div style="width:20px;height:20px;background:#2563eb;border:4px solid #fff;border-radius:50%;box-shadow:0 0 0 6px rgba(37,99,235,.3),0 2px 8px rgba(0,0,0,.3)"></div>`,
-            className:'', iconSize:[20,20], iconAnchor:[10,10]
+            className:'',iconSize:[20,20],iconAnchor:[10,10]
           });
-          userMarker = L.marker([userPosition.lat, userPosition.lng], { icon: pulseIcon, zIndexOffset:1000 });
+          userMarker = L.marker([userPos.lat,userPos.lng],{icon:ico,zIndexOffset:1000});
           userMarker.bindPopup('<b style="font-size:1.4rem">📍 Sei qui</b>');
-          userMarker.addTo(mapInstance);
-          mapInstance.setView([userPosition.lat, userPosition.lng], 16);
-          updateAllDistances(city);
+          userMarker.addTo(map);
+          map.setView([userPos.lat,userPos.lng],16);
+          DATA[city].forEach(a => a.dist=hvs(userPos.lat,userPos.lng,a.lat,a.lng));
           renderGrid(city);
-          setMapStatus('✅ Posizione trovata — tocca un segnaposto per distanza e navigazione');
+          setMapStatus('✅ La tua posizione è il punto blu — tocca i segnaposti per distanza e navigazione');
         },
-        _err => {
-          setMapStatus('⚠️ GPS non disponibile — mappa senza posizione. Attiva il GPS e riprova.');
+        () => {
+          setMapStatus('⚠️ GPS non disponibile — attiva la posizione per vedere le distanze a piedi');
         },
-        { timeout:12000, enableHighAccuracy:true }
+        {timeout:12000,enableHighAccuracy:true}
       );
     } else {
-      setMapStatus('⚠️ GPS non supportato da questo browser');
+      setMapStatus('⚠️ GPS non supportato — mappa mostrata senza posizione');
     }
-  }, 120);
+  }, 150);
 }
 
-function buildPopupContent(a) {
-  const navUrl = `https://www.google.com/maps/dir/?api=1&destination=${a.lat},${a.lng}&travelmode=walking`;
-  const dist = userPosition ? haversine(userPosition.lat, userPosition.lng, a.lat, a.lng) : null;
-  const distHtml = dist !== null
-    ? `<div class="popup-dist">🚶 ${formatDist(dist)} · ≈${walkMin(dist)} min a piedi</div>`
-    : '';
-  return `<div>
-    <div class="popup-name">${esc(a.name)}</div>
-    <div class="popup-cat">${esc(a.category)}</div>
-    <div class="popup-price">💶 ${esc(a.prezzo)}</div>
-    ${distHtml}
-    <a class="popup-go" href="${navUrl}" target="_blank" rel="noopener noreferrer">🧭 Portami Lì</a>
-  </div>`;
+function mkPopup(a) {
+  const nav = `https://www.google.com/maps/dir/?api=1&destination=${a.lat},${a.lng}&travelmode=walking`;
+  const d = userPos ? hvs(userPos.lat,userPos.lng,a.lat,a.lng) : null;
+  const dh = d!==null ? `<div class="pdist">🚶 ${fdist(d)} · ≈${fmin(d)} min a piedi</div>` : '';
+  return `<div><div class="pname">${esc(a.name)}</div><div class="pcat">${esc(a.cat)}</div><div class="pprice">💶 ${esc(a.prezzo)}</div>${dh}<a class="pgo" href="${nav}" target="_blank" rel="noopener noreferrer">🧭 Portami Lì</a></div>`;
 }
 
 function openMapOnPlace(id) {
-  const city = ATTRACTIONS.madrid.find(a=>a.id===id) ? 'madrid' : 'toledo';
+  const city = DATA.madrid.find(a=>a.id===id) ? 'madrid' : 'toledo';
   openMap(city);
   setTimeout(() => {
-    const a = ATTRACTIONS[city].find(x => x.id===id);
-    if (!a || !mapInstance) return;
-    mapInstance.setView([a.lat, a.lng], 17);
-    const marker = attractionMarkers.find(m => m._attractionId===id);
-    if (marker) marker.openPopup();
-  }, 500);
+    const a = DATA[city].find(x=>x.id===id);
+    if (!a||!map) return;
+    map.setView([a.lat,a.lng],17);
+    const mk = atkMarkers.find(m=>m._aid===id);
+    if (mk) mk.openPopup();
+  }, 700);
 }
 
 function closeMap() {
@@ -704,45 +752,24 @@ function closeMap() {
   document.body.style.overflow = '';
 }
 
-function setMapStatus(msg) {
-  const el = document.getElementById('map-status');
-  if (el) el.textContent = msg;
+function setMapStatus(t) {
+  const e = document.getElementById('map-status');
+  if(e) e.textContent = t;
 }
 
-function updateAllDistances(city) {
-  if (!userPosition) return;
-  ATTRACTIONS[city].forEach(a => {
-    a.dist = haversine(userPosition.lat, userPosition.lng, a.lat, a.lng);
-  });
-}
-
-// ============================================================
-//  UTILS DISTANZA
-// ============================================================
-function haversine(lat1,lng1,lat2,lng2) {
-  const R=6371000, dL=(lat2-lat1)*Math.PI/180, dN=(lng2-lng1)*Math.PI/180;
-  const a=Math.sin(dL/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dN/2)**2;
+// ═══════════════════════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════════════════════
+function hvs(a1,n1,a2,n2){
+  const R=6371000,dA=(a2-a1)*Math.PI/180,dN=(n2-n1)*Math.PI/180;
+  const a=Math.sin(dA/2)**2+Math.cos(a1*Math.PI/180)*Math.cos(a2*Math.PI/180)*Math.sin(dN/2)**2;
   return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
-function formatDist(m){ return m<1000 ? Math.round(m)+'m' : (m/1000).toFixed(1)+'km'; }
-function walkMin(m){ return Math.ceil(m/80); }
+function fdist(m){return m<1000?Math.round(m)+'m':(m/1000).toFixed(1)+'km'}
+function fmin(m){return Math.ceil(m/80)}
+function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')}
 
-// ============================================================
-//  UTILS
-// ============================================================
-function esc(s){
-  if(!s) return '';
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
-}
-function showToast(msg,type='info'){
-  const c=document.getElementById('toast-container');
-  const t=document.createElement('div');
-  t.className='toast '+type; t.textContent=msg; c.appendChild(t);
-  requestAnimationFrame(()=>requestAnimationFrame(()=>t.classList.add('show')));
-  setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),300);},2800);
-}
-
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeMap(); });
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMap()});
 </script>
 </body>
 </html>

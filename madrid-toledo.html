@@ -58,12 +58,13 @@
     #map-container{flex:1;width:100%;min-height:0}
     .map-status{background:rgba(0,0,0,.82);color:#fff;padding:.6rem 1rem;font-size:var(--xs);font-weight:600;text-align:center;flex-shrink:0;line-height:1.5}
 
-    .leaflet-popup-content-wrapper{border-radius:var(--rm)!important;font-family:'Outfit',sans-serif!important;font-size:1.5rem!important;box-shadow:0 4px 20px rgba(0,0,0,.25)!important}
-    .pname{font-weight:900;font-size:1.7rem;color:var(--hbg);margin-bottom:.2rem}
-    .pcat{font-size:1.2rem;color:var(--muted);margin-bottom:.2rem}
-    .pprice{font-size:1.2rem;color:#374151;margin-bottom:.3rem}
-    .pdist{font-size:1.4rem;font-weight:700;color:var(--go);margin-bottom:.35rem}
-    .pgo{display:inline-block;background:var(--go);color:#fff;padding:.35rem .9rem;border-radius:.5rem;font-weight:700;font-size:1.3rem;text-decoration:none;margin-top:.2rem}
+    .leaflet-popup-content-wrapper{border-radius:10px!important;font-family:'Outfit',sans-serif!important;font-size:14px!important;box-shadow:0 4px 20px rgba(0,0,0,.25)!important;max-width:220px!important}
+    .leaflet-popup-content{margin:10px 12px!important}
+    .pname{font-weight:900;font-size:15px;color:var(--hbg);margin-bottom:2px;line-height:1.3}
+    .pcat{font-size:12px;color:var(--muted);margin-bottom:2px}
+    .pprice{font-size:12px;color:#374151;margin-bottom:3px}
+    .pdist{font-size:13px;font-weight:700;color:var(--go);margin-bottom:4px}
+    .pgo{display:inline-block;background:var(--go);color:#fff;padding:5px 12px;border-radius:6px;font-weight:700;font-size:13px;text-decoration:none;margin-top:3px}
     .pgo:hover{background:#15803d}
 
     .search-box{background:var(--card);border:2.5px solid var(--bord);border-radius:var(--rl);padding:.75rem 1rem;margin-bottom:1.25rem;box-shadow:var(--shadc);display:flex;gap:.5rem;align-items:center;position:relative}
@@ -695,7 +696,7 @@ function openMap(city) {
       });
       const m = L.marker([a.lat,a.lng],{icon:ico});
       m._aid = a.id;
-      m.bindPopup(()=>mkPopup(a),{maxWidth:300,minWidth:220});
+      m.bindPopup(()=>mkPopup(a),{maxWidth:220,minWidth:160});
       m.addTo(map);
       atkMarkers.push(m);
     });

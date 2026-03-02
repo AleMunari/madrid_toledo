@@ -66,11 +66,11 @@
     .pgo{display:inline-block;background:var(--go);color:#fff;padding:.35rem .9rem;border-radius:.5rem;font-weight:700;font-size:1.3rem;text-decoration:none;margin-top:.2rem}
     .pgo:hover{background:#15803d}
 
-    .search-box{background:var(--card);border:2.5px solid var(--bord);border-radius:var(--rl);padding:1rem 1.25rem;margin-bottom:1.25rem;box-shadow:var(--shadc);display:flex;gap:.75rem;align-items:center}
-    .search-input{flex:1;border:none;background:transparent;font-family:inherit;font-size:var(--base);color:var(--tx);outline:none}
+    .search-box{background:var(--card);border:2.5px solid var(--bord);border-radius:var(--rl);padding:.75rem 1rem;margin-bottom:1.25rem;box-shadow:var(--shadc);display:flex;gap:.5rem;align-items:center;position:relative}
+    .search-input{flex:1;border:none;background:transparent;font-family:inherit;font-size:var(--base);color:var(--tx);outline:none;text-align:left;min-width:0;padding-right:.25rem}
     .search-input::placeholder{color:#94a3b8}
-    .clear-btn{background:transparent;border:none;cursor:pointer;font-size:1.75rem;color:var(--muted);padding:.25rem;border-radius:50%}
-    .clear-btn:hover{background:var(--bg2)}
+    .clear-btn{background:var(--bg2);border:none;cursor:pointer;font-size:1.5rem;color:var(--muted);padding:.3rem .6rem;border-radius:.75rem;flex-shrink:0;display:flex;align-items:center;justify-content:center;min-width:2.5rem;min-height:2.5rem;transition:background .15s}
+    .clear-btn:hover{background:var(--bord)}
 
     .filter-bar{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.25rem}
     .filter-btn{padding:.55rem 1rem;background:var(--card);border:2px solid var(--bord);border-radius:2rem;font-family:inherit;font-size:var(--xs);font-weight:700;color:var(--tx2);cursor:pointer;transition:all .15s}
@@ -128,7 +128,7 @@
     <div class="search-box">
       <span style="font-size:2rem">🔍</span>
       <input type="text" class="search-input" id="search-madrid" placeholder="Cerca..." oninput="renderGrid('madrid')" autocomplete="off"/>
-      <button class="clear-btn" onclick="clearSearch('madrid')">✕</button>
+      <button class="clear-btn" onclick="clearSearch('madrid')" title="Cancella ricerca">✕ Cancella</button>
     </div>
     <div class="filter-bar" id="filters-madrid"></div>
     <div class="grid" id="grid-madrid" aria-live="polite"></div>
@@ -142,7 +142,7 @@
     <div class="search-box">
       <span style="font-size:2rem">🔍</span>
       <input type="text" class="search-input" id="search-toledo" placeholder="Cerca..." oninput="renderGrid('toledo')" autocomplete="off"/>
-      <button class="clear-btn" onclick="clearSearch('toledo')">✕</button>
+      <button class="clear-btn" onclick="clearSearch('toledo')" title="Cancella ricerca">✕ Cancella</button>
     </div>
     <div class="filter-bar" id="filters-toledo"></div>
     <div class="grid" id="grid-toledo" aria-live="polite"></div>
@@ -601,7 +601,9 @@ function buildFilters(city) {
 }
 
 function clearSearch(city) {
-  document.getElementById('search-'+city).value = '';
+  const inp = document.getElementById('search-'+city);
+  inp.value = '';
+  inp.focus();
   renderGrid(city);
 }
 
